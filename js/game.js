@@ -20,6 +20,9 @@ let tailLength = 2;             // this starts the snake with 2 tails
 let appleX = 5;
 let appleY = 5;
 
+let inputsXVelocity = 0;
+let inputsYVelocity = 0;
+
 //movement variables where we 
 let xVelocity = 0;
 let yVelocity = 0;
@@ -81,28 +84,29 @@ function checkAppleCollision() {
 
 // add event listener for keydown
 
-window.addEventListener('keydown', keyDown);
+canvas.addEventListener('keydown', keyDown);
 
 function keyDown(e) {
-    if (e.keyCode == 38){ // 38 = up, google keycodes
+    if (e.keyCode == 38 || e.keyCode == 87){ // 38 = up, google keycodes
       if (yVelocity == 1)  // because in down movements, yvelocity is 1 and x is 0, this prevents snake from going back up into its own body
         return;
-      yVelocity = -1;
-      xVelocity = 0;
+      inputsYVelocity = -1;
+      inputsXVelocity = 0;
     }
   
-    if (e.keyCode == 40) { // 40 = down
-      yVelocity = 1;
-      xVelocity = 0;
+    if (e.keyCode == 40 || e.keyCode == 83) { // 40 = down
+      inputsYVelocity = 1;
+      inputsXVelocity = 0;
     }
   
-    if (e.keyCode == 37) { // 37 = left
-      yVelocity = 0;
-      xVelocity = -1;
+    if (e.keyCode == 37 || e.keyCode == 65) { // 37 = left
+      inputsYVelocity = 0;
+      inputsXVelocity = -1;
     }
   
-    if (e.keyCode == 39) { // 39 = right
-      yVelocity = 0;
-      xVelocity = 1;
+    if (e.keyCode == 39 || e.keyCode == 68) { // 39 = right
+      inputsYVelocity = 0;
+      inputsXVelocity = 1;
     }
+    console.log(e.keyCode);
   }
