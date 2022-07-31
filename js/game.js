@@ -4,7 +4,8 @@ const ctx = canvas.getContext('2d');
 
 let speed = 7;                  // higher = faster
 let tileCount = 20;             // 20 tiles across, 20 down
-let tileSize = canvas.width / tileCount - 4;
+let tileSize = canvas.width / tileCount - 2;
+let objectSize = tileSize * 2;
 
 const mushroom = [];
 let tailLength = 2;             // this starts the snake with 2 tails
@@ -15,7 +16,7 @@ let score = 0;
  * Location variables
  */
  let headX = 10;
- let headY = 10;                 // starts snake in middle of screen
+ let headY = 17;                 // starts snake in middle of screen
  
  let appleX = 5;
  let appleY = 5;                 // food
@@ -36,7 +37,7 @@ let score = 0;
  let sPressed = false;
  let dPressed = false;
 
- let gravity = 10;
+ let gravity = 2;
  
 /**
  * Number generation variables
@@ -82,7 +83,7 @@ class Entity{
 class Snake extends Entity{
 
     constructor(){
-        super(19, 10, tileSize, tileSize);
+        super(9, 15, tileSize, tileSize);
         this.snakeParts = [];
         this.snakeParts.push(new SnakePart(this.x, this.y + this.snakeParts.length + 1));
         this.snakeParts.push(new SnakePart(this.x, this.y + this.snakeParts.length + 1));
@@ -95,14 +96,14 @@ class Snake extends Entity{
         ctx.fillStyle = 'green'
         this.snakeParts.forEach((snakePart)=>{
             let part = snakePart;
-            ctx.fillRect(part.x * tileCount, part.y * tileCount, tileSize, tileSize);
+            ctx.fillRect(part.x * tileCount, part.y * tileCount, objectSize, objectSize);
             
         });
         // for(let i=0; i < snakeParts.length; i++) {
         //     
         // }
         ctx.fillStyle = 'orange'
-        ctx.fillRect(this.x * tileCount, this.y * tileCount, tileSize, tileSize);
+        ctx.fillRect(this.x * tileCount, this.y * tileCount, objectSize, objectSize);
         
     }
 
@@ -121,15 +122,35 @@ class Snake extends Entity{
     }
 }
 
+class Mushrooms extends Entity{
+  constructor(x,y){
+      super(x,y, tileSize, tileSize);    // pass tilesize to constructor
+
+      // this.color = 'white';
+      let rand = Math.floor(Math.random() * (1 + -5 - -1)) + 1;
+      this.negNum = rand;
+
+  }
+
+  draw() {
+      this.gravity();
+      ctx.fillStyle = 'white';
+      ctx.fillRect(this.x * tileCount, this.y * tileCount, tileSize * 2, tileSize * 2);
+      ctx.fillStyle = 'black';
+      ctx.font = 'bold 20px Arial';
+      ctx.fillText(this.negNum, (this.x * tileCount) + 12, (this.y * tileCount) + 25);
+  }
+
+}
 
 
   //player 2 mushroom on click event
-class Mushrooms extends Entity{
+class Apples extends Entity{
     constructor(x,y){
         super(x,y, tileSize, tileSize);    // pass tilesize to constructor
 
         // this.color = 'white';
-        let rand = Math.floor(Math.random() * 4) * -1;
+        let rand = Math.round(Math.random() * 1) * -2;
         this.negNum = rand;
 
     }
@@ -139,8 +160,8 @@ class Mushrooms extends Entity{
         ctx.fillStyle = 'white';
         ctx.fillRect(this.x * tileCount, this.y * tileCount, tileSize, tileSize);
         ctx.fillStyle = 'black';
-        ctx.font = 'bold 10px Arial';
-        ctx.fillText(this.negNum, (this.x * tileCount) + 4, (this.y * tileCount) + 10);
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText(this.negNum, (this.x * tileCount) + 10, (this.y * tileCount) + 10);
     }
 
 }
@@ -149,9 +170,9 @@ class Mushrooms extends Entity{
 const snake = new Snake();
 
 
-const test = new Mushrooms(1,14);
+const testMush = new Mushrooms(1,1);
 const test2 = new Entity(1,14,tileSize,tileSize);
-console.log(test.detectHit(test2));
+console.log(testMush.detectHit(test2));
 
 // Player 1 - snake
 // Player 2 - create apples
@@ -192,14 +213,16 @@ function drawGame() {
         drawWall();
         // Mushrooms.draw();
         // checkAppleCollision();
-        test.draw();
+        testMush.draw();
         snake.draw();
+        drawTest();
+        
         // setTimeout(drawGame, 1000/ speed);
     
         if (aPressed && snake.x > 0) {
             snake.x -= 1;
             snake.moveTail(-1);
-        } else if (dPressed && snake.x < tileCount -1) {
+        } else if (dPressed && snake.x < tileCount - 2) {
             snake.x += 1;
             snake.moveTail(1);
         }
@@ -225,10 +248,13 @@ function changeSnakePosition() {
 
 function drawApple() {
     ctx.fillStyle = 'red';
-    ctx.fillRect(appleX * tileCount, appleY * tileCount, tileSize, tileSize)
+    ctx.fillRect(appleX * tileCount, appleY * tileCount, objectSize, objectSize)
 }
 
-
+function drawTest() {
+  ctx.fillStyle = 'grey';
+  ctx.fillRect(0.2 * tileCount, 0 * tileCount, objectSize, objectSize)
+}
 
 /** -----------------------
  * Collision mechanism
@@ -296,7 +322,7 @@ function drawApple() {
             return false;
         }
 
-        // is a is right of be
+        // is a is right of b
         if (aTopLeft.x > bBottomRight.x) {
             return false;
         }
@@ -365,7 +391,7 @@ function keyUpHandler(event) {
     }
 }
 
-setInterval(drawGame, 50);
+setInterval(drawGame, 1000);
 
 /** ---------------------
  * Future use
