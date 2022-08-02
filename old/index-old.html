@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Montserrat:wght@100;200;300;500;600&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+    <title>Document</title>
+</head>
+
+
+
+<body>
+    <div id="container">
+        <aside id="aside__top">
+            <h1>Title goes here</h1>
+        </aside>
+
+
+        <aside id="aside__buttoncontainer">
+            <!-- <p>text</p> -->
+            <a href="#popup1"><button id="help">Help</button></a>
+            <button id="start">Start</button>
+            <button id="reset">Reset</button>
+        </aside>
+
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <h2>Instructions</h2>
+                <a class="close" href="#">&times;</a>
+                <div class="content">
+                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. </p>
+                </div>
+            </div>
+        </div>
+        <div class="status__container">
+            <div class="info__box" id="score__container">
+                <h2>SCORE</h2>
+                <h1 id="score">0</h1>
+            </div>
+            <div class="info__box" id="status__container">
+                <h2>STATUS</h2>
+                <h1 id="status">--</h1>
+            </div>
+        </div>
+    <canvas id="game__container" width="400" height="600"></canvas>
+        
+
+    </div> <!-- end container div -->
+
+
+
+    <script src="./js/game.js"></script>
+
+</body>
+</html>

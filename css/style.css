@@ -122,8 +122,8 @@ button:active {
 canvas {
     border: 2px solid green;
     border-radius: 10px;
-    padding-top: 4px;
-    padding-left: 4px;
+    /* padding-top: 4px; */
+    /* padding-left: 4px; */
     /* height: 80%;
     width: 95%; */
     /* margin: 2rem; */
