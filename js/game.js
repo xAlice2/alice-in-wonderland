@@ -28,6 +28,7 @@ class Player {
     this.width = 25;
     this.height = 25;
     this.speed = 4;         // movement speed
+    this.health = 50;
 
     document.addEventListener('keydown', this.keydown);
     document.addEventListener('keyup', this.keyup);
@@ -43,6 +44,15 @@ class Player {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         
         this.shoot();
+        ctx.fillStyle = "#fff";
+        ctx.font = "13px Montserrat";
+        ctx.textAlign ="center"; 
+        ctx.textBaseline = "middle";
+        ctx.fillText(
+            this.health, 
+            this.x + this.width / 2, 
+            this.y + this.height / 2
+        )
     }
 
     shoot() {
@@ -229,13 +239,22 @@ class Enemy{
     }
 
     draw(ctx){
-        ctx.fillStyle = "#240046";  // fill color is this
-        if(this.health > 1){
-            ctx.strokeStyle = "white"
-        }else{                          // if health less than 1, border is color
-            ctx.strokeStyle = this.color;
+        ctx.fillStyle = "black";       // **FILL** color inside the tiles
+        if(this.health === 1){
+            ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
+        }else if(this.health === 2){
+            ctx.strokeStyle = "#FCBB6D"           // burlywood (med) 
+        }else if(this.health === 3){
+            ctx.strokeStyle = "#F0B7A4"             // blanchedalmond (light)
+        }else{                         
+            ctx.strokeStyle = "#fff";            // normal color
         }
-        ctx.shadowBlur = "";
+        ctx.shadowColor = "red";                // GLOW F1E6C1
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.lineJoin = "bevel";         // beveled edges
+        ctx.lineWidth = 4;              // how big the line width is
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x, this.y, this.width, this.height);
 
@@ -278,58 +297,55 @@ function getRandomInt(min, max) {
 let randNum = getRandomInt(1, 10);
 const randNum2 = Math.floor(Math.random() * 3) + 1;
 
-const tileSpace = 57;
+//
+// each tile has a spacing of 2 px in between, making the tilesize 55
+const tileSpace = 2;
+const tileSize = 55; // 55 + 2
+const nextTile = tileSize * tileSpace;
+
 const enemies = [
-    new Enemy(5, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(62, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(119, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(176, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(233, 5, "gold", getRandomInt(1, 10)),
+    new Enemy(5, 5, "orange", getRandomInt(1, 1)),
+    new Enemy(62, 5, "gold", getRandomInt(1, 1)),
+    new Enemy(119, 5, "gold", getRandomInt(2, 2)),
+    new Enemy(176, 5, "gold", getRandomInt(2, 2)),
+    new Enemy(233, 5, "gold", getRandomInt(3, 3)),
 
-    new Enemy(290, 5, "gold", getRandomInt(1, 10)),
+    new Enemy(290, 5, "gold", getRandomInt(3, 3)),
     new Enemy(347, 5, "gold", getRandomInt(1, 10)),
     new Enemy(404, 5, "gold", getRandomInt(1, 10)),
     new Enemy(461, 5, "gold", getRandomInt(1, 10)),
     new Enemy(518, 5, "gold", getRandomInt(1, 10)),
 
-    new Enemy(5, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(62, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(119, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(176, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(233, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(5, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(62, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(119, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(176, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(233, 62, "gold", getRandomInt(1, 10)),
 
-    new Enemy(290, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(347, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(404, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(461, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(518, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(290, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(347, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(404, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(461, 62, "gold", getRandomInt(1, 10)),
+    // new Enemy(518, 62, "gold", getRandomInt(1, 10)),
+
+    new Enemy(5, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(62, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(119, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(176, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(233, 119, "gold", getRandomInt(1, 10)),
+
+    new Enemy(290, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(347, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(404, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(461, 119, "gold", getRandomInt(1, 10)),
+    new Enemy(518, 119, "gold", getRandomInt(1, 10)),
 ];
 
-const enemies2 = [
-    new Enemy(5, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(62, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(119, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(176, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(233, 5, "gold", getRandomInt(1, 10)),
 
-    new Enemy(290, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(347, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(404, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(461, 5, "gold", getRandomInt(1, 10)),
-    new Enemy(518, 5, "gold", getRandomInt(1, 10)),
+const coordArray = [
 
-    new Enemy(5, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(62, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(119, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(176, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(233, 62, "gold", getRandomInt(1, 10)),
-
-    new Enemy(290, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(347, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(404, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(461, 62, "gold", getRandomInt(1, 10)),
-    new Enemy(518, 62, "gold", getRandomInt(1, 10)),
 ];
+
 
 
 function gameLoop() {
