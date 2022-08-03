@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = 576;
 canvas.height = 803;
 const tSize = canvas.width / 5 - 12;
-const playerTile = 30;
+const playerTile = 50;
 //row = 114.6
 
 const cw = 572;
@@ -60,9 +60,11 @@ class Player extends Entity{
         this.x = x;
         this.y = y;
         this.bulletController = bulletController;
+        
         // this.width = tSize;
         // this.height = tSize;
         this.speed = 4;         // movement speed
+        this.alive = true;
         this.health =  5;
 
 
@@ -85,7 +87,7 @@ class Player extends Entity{
         
         ctx.fillStyle = "black";
         // ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.arc(this.x + 15, this.y + 13.5, 25, 0, 2 * Math.PI);
+        ctx.arc(this.x + 25, this.y + 25, 25, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
         this.shoot();
@@ -103,6 +105,10 @@ class Player extends Entity{
             this.x + this.width / 2, 
             this.y + this.height / 2
         )
+
+        if (this.health <= 0){
+          this.alive = false;
+        }
     }
     
 
@@ -124,7 +130,15 @@ class Player extends Entity{
         }
     }
 
-
+    collideWith(entity) {
+      if ((entity instanceof Enemy && 
+        entity.health > 0) &&   // only collides if we have enough health
+        this.detectHit(entity)){  // add or statement for divider 
+        this.health--;
+        entity.health = 0;
+        enemies.splice(enemies.indexOf(entity), 1)
+      }
+    }
 
     // player movement
     move() {
@@ -181,6 +195,12 @@ class Player extends Entity{
 
 
 }
+/**
+ * Bullet constructor
+ * 
+ */
+
+
 class BulletController{
     bullets = [];
     timerTillNextBullet = 0;
@@ -207,11 +227,15 @@ class BulletController{
         this.bullets.forEach((bullet) => {
             if (this.isBulletOffScreen(bullet)) {
             const index = this.bullets.indexOf(bullet);
-            this.bullets.splice(index, 1);
+            this.bullets.splice(index, 1);  // remove bullet when offscreen
             }
 
             bullet.draw(ctx);
         });
+    }
+
+    removeBullet(bullet){
+      this.bullets.splice(this.bullets.indexOf(bullet),1);
     }
 
     isBulletOffScreen(bullet) {
@@ -220,7 +244,8 @@ class BulletController{
     collideWith(sprite){
         return this.bullets.some(bullet =>{
             if(bullet.collideWith(sprite)) {
-                this.bullets.splice(this.bullets.indexOf(bullet),1);
+                this.removeBullet(bullet);
+              
                 return true;
             }
             return false;
@@ -230,16 +255,17 @@ class BulletController{
 
 }
 const currentColor = [];
-class Bullet{
-
+class Bullet extends Entity{
+    
     constructor(x, y, speed, damage){
-        this.x = x; 
-        this.y = y; 
+      super(x, y, 15, 5);
+        // this.x = x; 
+        // this.y = y; 
         this.speed = speed;
         this.damage = damage;
 
-        this.width = 5;
-        this.height = 15;
+        // this.width = 5;
+        // this.height = 15;
         
         this.color = "yellow";
     }
@@ -255,19 +281,22 @@ class Bullet{
         
     }
 
+
     // collision detection
     collideWith(sprite) {
         if (
-          this.x < sprite.x + sprite.width &&
-          this.x + this.width > sprite.x &&
-          this.y < sprite.y + sprite.height &&
-          this.y + this.height > sprite.y
+          // this.x < sprite.x + sprite.width &&
+          // this.x + this.width > sprite.x &&
+          // this.y < sprite.y + sprite.height &&
+          // this.y + this.height > sprite.y
+          this.detectHit(sprite)
         ) {
           sprite.takeDamage(this.damage);
           return true;
         }
         return false;
       }
+
 }
 
 
@@ -337,6 +366,7 @@ class Enemy extends Entity{
         this.x = x;
         this.y = y;
         this.health = health;
+        // this.collided = false;
         this.width = tSize;
         this.height = tSize;
     }
@@ -385,7 +415,7 @@ class Enemy extends Entity{
 }
 
 /** ----------------------------------------------------------------------------
- * Helper function2 -
+ * Helper functions -
  * 
  *
  *
@@ -479,101 +509,50 @@ function randomBoolean(){
  * 
  *      purpose: to randomly spawn tiles at set coordinates
  *      level is 5 rows * level
- *
+ * 
+ * trashcan:
+ * var snakeHeadW = 22;        //snake head width
+ * var snakeTailW = 14;        //snake tail width
  ----------------------------------------------------------------------------- */
 
 
-// var snakeHeadW = 22;        //snake head width
-// var snakeTailW = 14;        //snake tail width
-// var dividerW = 5;           //divider width
-// var blockW = 100;           //block width
-// var snakePositionY = 600;   //snake positon y
-// let currentLevel = 2;         // current level
-// let score = 0;
-// let blockHPGen = randNum(1, 10); 
 
-// var levelData = {
-//     number:5, 			//starting block number
-//     block_arr:[4,5,3,2,4,5], 	//how many blocks per line (maximum 5)
-//     divider_arr:[1,2,3,1,2], 	//how many divider per line (maximum 5)
+let dividerW = 5;           //divider width
+let blockW = 100;           //block width
+let snakePositionY = 600;   //snake positon y
+let currentLevel = 3;         // current level
+let score = 0;
+let blockHPGen = randNum(1, 10);  // enemy hp
 
-//     gap_arr:[4,3,4,3,2], 		//how many gap after each block
+var levelData = {
+    number:5, 			//starting block number
+    block_arr:[4,5,3,2,4,5], 	//how many blocks per line (maximum 5)
+    divider_arr:[1,2,3,1,2], 	//how many divider per line (maximum 5)
 
-//     moveSpeed:3, 			//screen move speed
-//     numberIncrease:1, 		//number increase
-//     moveSpeedIncrease:.5, 	//move speed increase
-//     gridNextLevel:2,
+    gap_arr:[4,3,4,3,2], 		//how many gap after each block
 
-// }; 		
+    moveSpeed:3, 			//screen move speed
+    numberIncrease:1, 		//number increase
+    moveSpeedIncrease:.5, 	//move speed increase
+    gridNextLevel:2,
+
+}; 		
+
+    const tileWidth = (canvas.width / 5) - 2;  // we want 5 tiles of 113 across the width of screen
+    const tileHeight = (canvas.height / 7) - 2; 
+
+    var stage = [];
+
+// function to control render of enemies happens once per level
+// two const cellwidth * column + cellheight * row
+
 
 
 /**--------------------------------------------------------
 cw = 572;
 ch = 803;
  */
-
-
-// var rows = 5;                       // 5 tiles across
-// var cols = 5 * levelData.number;    // tiles down
-
-// var padding = 2;
-// var w = (cw - padding * cols) / cols;
-// var h = (ch - padding * rows) / rows;
-
-// // level 1 is x = (1 * levelData.number) by y = (levelData.number * currentLevel) -> 5 across, 5 down = total 35 items in the levelContainer array
-// // level 2 is x = (1 * levelData.number) by y = (levelData.number * currentLevel)  
-// // something something levelGridContainer.push(randNumGen)
-
-// let blocksPerRow = 4; //levelData.block_arr[randNum(0, 5)];
-// let dividerPerLine = 3; //levelData.divider_arr[randNum(0, 4)];
-
-// let levelGridContainer = [];
-// function levelGenerator() {
-//     for (var y = 0; y < rows; y++) {
-//         for (var x = 0; x < cols; x++) {
-//             console.log(`coordinate ${x}x, ${y}y`);
-//             levelGridContainer.push(blockNumGen);
-//         }
-//     }
-// };
-
-// var num = [0,0,0].map(function(el,i){
-//     return this+i;
-//     },Math.floor(Math.random()*5));
-
-//     levelGridContainer.push(new Platform({x:posX, y:posY}));
-
-//     const tileWidth = canvas.width / 5 - 2;  // we want 5 tiles of 113 across the width of screen
-//     const tileHeight = canvas.height / 5 - 2; 
-//     var wid = can.width,
-//     hei = can.height,
-//     numPlatforms = 14,
-//     platforms = [],
-//     hash = {};
-
-// for(var i = 0; i < numPlatforms; i++){
-//   var posX = Math.floor(Math.random()*(wid-tileWidth)/tileWidth) * tileWidth,
-//     posY = Math.floor(Math.random()*(hei-tileHeight)/tileHeight) * tileHeight;
-  
-//   while (hash[posX + 'x' + posY]){
-//     posX = Math.floor(Math.random()*wid/tileWidth) * tileWidth;
-//     posY = Math.floor(Math.random()*hei/tileHeight) * tileHeight;
-//   }
-  
-//   hash[posX + 'x' + posY] = 1; 
-//   platforms.push(({x:posX, y:posY}, tileWidth, tileHeight));
-// }
-
 /**
- *  shuffle block array
- *  shuffle divider array
- *  shuffle gap array
- *  push randNum's generated numbers into level container
- */
-
-    // enemy constructor = x,y,health
-
-/*-------------------------------------------------------------------
  * 
  * CREATE DIVIDER here
  * 
@@ -585,8 +564,27 @@ ch = 803;
 // test for visualization
 // math: xy * 113 = 5 blocks per row
 
+const enemies = [];
 
-const enemies = [
+function createStage(){
+  for(let i = 0; i < currentLevel; i++){
+    if (randomBoolean()){
+      enemies.push(new Enemy(4, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+    } if (randomBoolean()){
+      enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+    } if (randomBoolean()){
+      enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+    } if (randomBoolean()){
+      enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+    } if (randomBoolean()){
+      enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+    }
+
+  }
+}
+
+
+const enemies2 = [
     new Enemy(10, 10, randNum(1, 20)),       // line 1, 5 blocks per row
     new Enemy(123, 10, randNum(1, 20)),
     new Enemy(236, 10, randNum(2, 20)),
@@ -653,14 +651,22 @@ const enemies = [
 //     }
 // }
 
+let lastLevelUpdate = 0;
+
 function gameLoop() {
     
-        requestAnimationFrame(gameLoop);
+
         // ctx.clearRect(0, 0, innerWidth, innerHeight);
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         bulletController.draw(ctx);
         player.draw(ctx);
+
+        if (lastLevelUpdate < currentLevel){  // to ensure we only draw that stage once per game loop
+          createStage();
+          lastLevelUpdate = currentLevel;
+        }
+
         // levelGenerator();
 
         for (var i = 0; i < particleArray.length; i++) {
@@ -687,12 +693,14 @@ function gameLoop() {
     // new Enemy(100,100, "yellow", 10).draw(ctx);
 
     enemies.forEach((enemy) => {
-        if (bulletController.collideWith(enemy)) {
+        if (player.alive && bulletController.collideWith(enemy)) {
           if (enemy.health <= 0) {
+            
             const index = enemies.indexOf(enemy);
             enemies.splice(index, 1);
           }
         } else {
+          player.collideWith(enemy);
           enemy.draw(ctx);
         }
       });
@@ -714,7 +722,9 @@ function gameLoop() {
         }
     }
 
-
+    if (player.alive) {
+      requestAnimationFrame(gameLoop);
+    }
 
     
     
@@ -757,3 +767,65 @@ gameLoop();
 //     ctx.lineJoin = "bevel";         // beveled edges
 //     ctx.lineWidth = 5;              // how big the line width is
 // }
+
+
+
+// var rows = 5;                       // 5 tiles across
+// var cols = 5 * levelData.number;    // tiles down
+
+// var padding = 2;
+// var w = (cw - padding * cols) / cols;
+// var h = (ch - padding * rows) / rows;
+
+// // level 1 is x = (1 * levelData.number) by y = (levelData.number * currentLevel) -> 5 across, 5 down = total 35 items in the levelContainer array
+// // level 2 is x = (1 * levelData.number) by y = (levelData.number * currentLevel)  
+// // something something levelGridContainer.push(randNumGen)
+
+// let blocksPerRow = 4; //levelData.block_arr[randNum(0, 5)];
+// let dividerPerLine = 3; //levelData.divider_arr[randNum(0, 4)];
+
+// let levelGridContainer = [];
+// function levelGenerator() {
+//     for (var y = 0; y < rows; y++) {
+//         for (var x = 0; x < cols; x++) {
+//             console.log(`coordinate ${x}x, ${y}y`);
+//             levelGridContainer.push(blockNumGen);
+//         }
+//     }
+// };
+
+// var num = [0,0,0].map(function(el,i){
+//     return this+i;
+//     },Math.floor(Math.random()*5));
+
+//     levelGridContainer.push(new Platform({x:posX, y:posY}));
+
+
+//     var wid = can.width,
+//     hei = can.height,
+//     numPlatforms = 14,
+//     platforms = [],
+//     hash = {};
+
+// for(var i = 0; i < numPlatforms; i++){
+//   var posX = Math.floor(Math.random()*(wid-tileWidth)/tileWidth) * tileWidth,
+//     posY = Math.floor(Math.random()*(hei-tileHeight)/tileHeight) * tileHeight;
+  
+//   while (hash[posX + 'x' + posY]){
+//     posX = Math.floor(Math.random()*wid/tileWidth) * tileWidth;
+//     posY = Math.floor(Math.random()*hei/tileHeight) * tileHeight;
+//   }
+  
+//   hash[posX + 'x' + posY] = 1; 
+//   platforms.push(({x:posX, y:posY}, tileWidth, tileHeight));
+// }
+
+/**
+ *  shuffle block array
+ *  shuffle divider array
+ *  shuffle gap array
+ *  push randNum's generated numbers into level container
+ */
+
+    // enemy constructor = x,y,health
+
