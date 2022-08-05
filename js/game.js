@@ -68,7 +68,7 @@ class Player extends Entity{
         
         this.speed = 10;                     // movement speed
         this.alive = true;
-        this.health =  500;
+        this.health =  20;
         this.radius = 25;                   // radius of the player
         this.diameter = this.radius - 22; 
         this.wall = 30;
@@ -82,18 +82,24 @@ class Player extends Entity{
     draw(ctx) {
         this.move();
         this.wallCheck();
-        // setCommonStyle();
+
         ctx.lineWidth = 3;
         ctx.strokeStyle = "lightgreen";
         ctx.shadowColor = "green";  //98D7d1
         ctx.shadowBlur = 15; 
-        // ctx.shadowOffsetX = 0;
-        // ctx.shadowOffsetY = 1;
-        // ctx.strokeRect(this.x, this.y, this.width, this.height);
-        
-        
         ctx.fillStyle = "black";
-        // ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        /** ============================================================
+         * code for rectangle player shape
+         * 
+         
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 1;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+          
+          ============================================================== */ 
+
         ctx.beginPath();
         ctx.arc(this.x + 25, this.y + 25, this.radius, 0, 2 * Math.PI);
         ctx.fill();
@@ -389,12 +395,6 @@ class Bullet extends Entity{
  * 
  *              For spawning tiles
  ----------------------------------------------------------------------------- */
- const spawnLine = -Math.abs(tSize);
-/** ----------------------------------------------------------------------------
- * Tile constructor -
- * 
- *              For spawning tiles
- ----------------------------------------------------------------------------- */
 
  class Enemy extends Entity{
   constructor(x, y, health){
@@ -588,11 +588,15 @@ var levelData = {
 cw = 572;
 ch = 803;
  */
-/**
+
+/** ================================================================
+ * Future feature: DIVIDERS!
  * 
- * CREATE DIVIDER here
+ *        -dividers are walls that spawn in the middle of a tile
+ *        -does not damage player when collide
+ *        -forces player to pick a lane to destroy tiles
  * 
- */
+ ===================================================================*/
 
 
 
@@ -669,19 +673,19 @@ function createStage(){
         console.log(`createNextStage2 drew box 1`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((1 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        enemies.push(new Enemy((1 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
         console.log(`createNextStage2 drew box 2`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((2 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        enemies.push(new Enemy((2 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
         console.log(`createNextStage2 drew box 3`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((3 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        enemies.push(new Enemy((3 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
         console.log(`createNextStage2 drew box 4`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((4 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        enemies.push(new Enemy((4 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
         console.log(`createNextStage2 drew box 5`);
       }
   
