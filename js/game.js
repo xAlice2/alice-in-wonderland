@@ -12,6 +12,10 @@ const ch = canvas.height;
 
 let gravity = 0.4;
 
+let enemyY;
+let enemyX;
+
+
 var mouse = {
     x: window.innerWidth/2,
     y: window.innerHeight/2
@@ -425,7 +429,9 @@ class Enemy extends Entity{
             this.x + this.width / 2, 
             this.y + this.height / 1.95
         )
-        
+
+        enemyY = this.y;
+        enemyX = this.x;
     }
 
     takeDamage(damage) {
@@ -543,9 +549,9 @@ function randomBoolean(){
 let dividerW = 5;           //divider width
 let blockW = 100;           //block width
 let snakePositionY = 600;   //snake positon y
-let currentLevel = 3;         // current level
+let currentLevel = 2;         // current level
 let score = 0;
-let blockHPGen = randNum(1, 10);  // enemy hp
+let blockHPGen = randNum((1 * currentLevel), (10 * currentLevel));  // enemy hp
 
 var levelData = {
     number:5, 			//starting block number
@@ -584,29 +590,54 @@ ch = 803;
 
 
 
-// test for visualization
+
 // math: xy * 113 = 5 blocks per row
 
 const enemies = [];
 
 function createStage(){
-  for(let i = 0; i < currentLevel; i++){
+  for(let i = 0; i < 1; i++){
     if (randomBoolean()){
       enemies.push(new Enemy(8, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
-    } if (randomBoolean()){
+    } 
+    if (randomBoolean()){
       enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-    } if (randomBoolean()){
+    } 
+    if (randomBoolean()){
       enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-    } if (randomBoolean()){
+    } 
+    if (randomBoolean()){
       enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-    } if (randomBoolean()){
+    } 
+    if (randomBoolean()){
       enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
     }
 
   }
 }
 
+function createNextStage(){
+    for(let i = 0; i < 1; i++){
+      if (randomBoolean()){
+        enemies.push(new Enemy(8, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      }
+  
+    }
+  }
 
+// test for visualization
 const enemies2 = [
     new Enemy(10, 10, randNum(1, 20)),       // line 1, 5 blocks per row
     new Enemy(123, 10, randNum(1, 20)),
@@ -718,15 +749,20 @@ function gameLoop() {
     enemies.forEach((enemy) => {
         if (player.alive && bulletController.collideWith(enemy)) {
           if (enemy.health <= 0) {
-            
+
             const index = enemies.indexOf(enemy);
             enemies.splice(index, 1);
+
           }
         } else {
-          player.collideWith(enemy);
-          enemy.draw(ctx);
+            player.collideWith(enemy);
+            enemy.draw(ctx);
         }
       });
+
+      if (enemyY >= tSize) {
+        createNextStage();
+      }
 
     // for (var i = 0; i < 3; i++) {
     //     spawnBalls();
