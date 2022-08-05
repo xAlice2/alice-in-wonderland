@@ -7,8 +7,8 @@ const tSize = canvas.width / 5 - 12;
 const playerTile = 50;
 //row = 114.6
 
-const cw = 572;
-const ch = 803;
+const cw = canvas.width;
+const ch = canvas.height;
 
 let gravity = 0.4;
 
@@ -21,8 +21,8 @@ var mouse = {
 
 
 
-const amoutofballs = 5;
-let particleArray = [];
+// const amountofballs = 5;
+// let particleArray = [];
 
 // class SnakePart{
 //     constructor(x,y){
@@ -61,11 +61,12 @@ class Player extends Entity{
         this.y = y;
         this.bulletController = bulletController;
         
-        // this.width = tSize;
-        // this.height = tSize;
-        this.speed = 4;         // movement speed
+        this.speed = 10;                     // movement speed
         this.alive = true;
         this.health =  5;
+        this.radius = 25;                   // radius of the player
+        this.diameter = this.radius - 22; 
+        this.wall = 30;
 
 
         document.addEventListener('keydown', this.keydown);
@@ -75,6 +76,7 @@ class Player extends Entity{
     // what our player looks like
     draw(ctx) {
         this.move();
+        this.wallCheck();
         // setCommonStyle();
         ctx.lineWidth = 3;
         ctx.strokeStyle = "lightgreen";
@@ -87,9 +89,11 @@ class Player extends Entity{
         
         ctx.fillStyle = "black";
         // ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.arc(this.x + 25, this.y + 25, 25, 0, 2 * Math.PI);
+        ctx.beginPath();
+        ctx.arc(this.x + 25, this.y + 25, this.radius, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
+        ctx.closePath();
         this.shoot();
         
         ctx.font = "20px Montserrat";
@@ -156,6 +160,23 @@ class Player extends Entity{
           this.x += this.speed;
         }
       }
+
+      wallCheck(){
+        if (this.y < this.diameter){        // up
+            this.y = this.diameter;
+        }
+        if (this.y > ch - playerTile){      // down
+            this.y = ch - playerTile;
+        }
+        if (this.x < this.diameter){        // left
+            this.x = this.diameter;
+        }
+        if (this.x > cw - playerTile){      // right
+            this.x = cw - playerTile;
+        }
+      }
+
+
       keydown = (e) => {
         if (e.code === "KeyW") {
           this.upPressed = true;
@@ -192,6 +213,7 @@ class Player extends Entity{
           this.shootPressed = false;
         }
       };
+
 
 
 }
@@ -241,6 +263,7 @@ class BulletController{
     isBulletOffScreen(bullet) {
         return bullet.y <= -bullet.height;
     }
+
     collideWith(sprite){
         return this.bullets.some(bullet =>{
             if(bullet.collideWith(sprite)) {
@@ -569,7 +592,7 @@ const enemies = [];
 function createStage(){
   for(let i = 0; i < currentLevel; i++){
     if (randomBoolean()){
-      enemies.push(new Enemy(4, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+      enemies.push(new Enemy(8, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
     } if (randomBoolean()){
       enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
     } if (randomBoolean()){
@@ -635,11 +658,11 @@ const enemies2 = [
  *          runs like a hamster on a wheel
  ----------------------------------------------------------------------------- */
 
-//  var amoutofballs = 5;
+//  var amountofballs = 5;
 //  var particleArray = [];
 
 //  function init() {
-//     for (var i = 0; i < amoutofballs; i++) {
+//     for (var i = 0; i < amountofballs; i++) {
 //         var radius = (Math.random()*5);
 //         var x = mouse.x;
 //         var y = mouse.y;
@@ -669,9 +692,9 @@ function gameLoop() {
 
         // levelGenerator();
 
-        for (var i = 0; i < particleArray.length; i++) {
-            particleArray[i].update();
-        }
+        // for (var i = 0; i < particleArray.length; i++) {
+        //     particleArray[i].update();
+        // }
   
 
     // current level variables
@@ -705,38 +728,38 @@ function gameLoop() {
         }
       });
 
-    for (var i = 0; i < 3; i++) {
-        spawnBalls();
-    }
+    // for (var i = 0; i < 3; i++) {
+    //     spawnBalls();
+    // }
     
-    function spawnBalls() {
-        for (var i = 0; i < amoutofballs; i++) {
-            var radius = (Math.random()*5);
-            var x = this.x;
-            var y = this.y;
-            var dx = (Math.random()-0.5)*5;
-            var dy = (Math.random()-0.5)*5;
-            var colornumber = Math.floor(Math.random()*4);
+    // function spawnBalls() {
+    //     for (var i = 0; i < amoutofballs; i++) {
+    //         var radius = (Math.random()*5);
+    //         var x = this.x;
+    //         var y = this.y;
+    //         var dx = (Math.random()-0.5)*5;
+    //         var dy = (Math.random()-0.5)*5;
+    //         var colornumber = Math.floor(Math.random()*4);
     
-            particleArray.push(new Particle(x, y, dx, dy, radius, colornumber));
-        }
-    }
+    //         particleArray.push(new Particle(x, y, dx, dy, radius, colornumber));
+    //     }
+    // }
 
     if (player.alive) {
       requestAnimationFrame(gameLoop);
     }
 
-    
+    // requestAnimationFrame(gameLoop);
     
 }
 
 
-window.addEventListener("mousemove", function(e) {
-    mouse.x = e.x;
-    mouse.y = e.y;
+// window.addEventListener("mousemove", function(e) {
+//     mouse.x = e.x;
+//     mouse.y = e.y;
 
-    spawnBalls();
-});
+//     spawnBalls();
+// });
 
 
 
