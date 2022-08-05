@@ -10,7 +10,8 @@ body {
 
 #game {
     box-shadow: 7px 7px 40px #623636;
+    border: 5px solid blueviolet;
     border-radius: 5px;
-    padding: 5px;
-    background-color: blueviolet;
+    padding-left: 12px;
+    background-color: black;
 }

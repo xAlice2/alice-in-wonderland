@@ -1,16 +1,17 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 576;
-canvas.height = 803;
-const tSize = canvas.width / 5 - 12;
+canvas.width = 580;
+canvas.height = 800;
+
+const tSize = canvas.width / 5 - 15;
 const playerTile = 50;
-//row = 114.6
+//row = 114.6s
 
 const cw = canvas.width;
 const ch = canvas.height;
 
-let gravity = 0.4;
+let gravity = 2;
 
 let enemyY;
 let enemyX;
@@ -67,7 +68,7 @@ class Player extends Entity{
         
         this.speed = 10;                     // movement speed
         this.alive = true;
-        this.health =  5;
+        this.health =  500;
         this.radius = 25;                   // radius of the player
         this.diameter = this.radius - 22; 
         this.wall = 30;
@@ -122,7 +123,7 @@ class Player extends Entity{
 
 
  /** ==================================================================
-  * Bug: delay seems to push the tiles back and slow the entire column
+  * Bug: delay seems to push the tiles back 
   * 
   */
 
@@ -132,7 +133,7 @@ class Player extends Entity{
             const speed = 5;
             const delay = 10;
             const damage = 1;
-            const bulletX = this.x + this.width/2;
+            const bulletX = this.x + this.width / 2;
             const bulletY = this.y;
             this.bulletController.shoot(bulletX, bulletY, speed, damage, delay);
         }
@@ -140,8 +141,8 @@ class Player extends Entity{
 
     collideWith(entity) {
       if ((entity instanceof Enemy && 
-        entity.health > 0) &&   // only collides if we have enough health
-        this.detectHit(entity)){  // add or statement for divider 
+        entity.health > 0) &&               // only collides if we have enough health
+        this.detectHit(entity)){            // add or statement for divider 
         this.health--;
         entity.health = 0;
         enemies.splice(enemies.indexOf(entity), 1)
@@ -163,11 +164,11 @@ class Player extends Entity{
         if (this.rightPressed) {
           this.x += this.speed;
         }
-      }
+      }  
 
       wallCheck(){
         if (this.y < this.diameter){        // up
-            this.y = this.diameter;
+            this.y = this.y;
         }
         if (this.y > ch - playerTile){      // down
             this.y = ch - playerTile;
@@ -221,10 +222,12 @@ class Player extends Entity{
 
 
 }
-/**
- * Bullet constructor
+/** ----------------------------------------------------------------------------
+ * Bullet Construction -
  * 
- */
+ *          targets for the pew pew
+ *  ----------------------------------------------------------------------------- */
+
 
 
 class BulletController{
@@ -300,7 +303,7 @@ class Bullet extends Entity{
 
     draw(ctx){
         ctx.fillStyle = this.color;
-        this.y -= this.speed; // negative because that is how it goes up
+        this.y -= this.speed;           // negative because that is how it goes up
         // ctx.shadowColor = "#d53";
         // ctx.shadowBlur = 20; // how much shadow is blurred 
         
@@ -328,9 +331,9 @@ class Bullet extends Entity{
 
 
 /** -------------------------------------------------------------
- *   Player Two constructor
+ *   Player Two constructor (WIP)
  * 
- *                  --decreases gravity on mouse click
+ *       -- adds power-ups for player one to overcome level difficulty
  * -------------------------------------------------------------- */
 
  let colors = [
@@ -386,67 +389,73 @@ class Bullet extends Entity{
  * 
  *              For spawning tiles
  ----------------------------------------------------------------------------- */
+ const spawnLine = -Math.abs(tSize);
+/** ----------------------------------------------------------------------------
+ * Tile constructor -
+ * 
+ *              For spawning tiles
+ ----------------------------------------------------------------------------- */
 
-class Enemy extends Entity{
-    constructor(x, y, health){
-        super(x, y, tSize, tSize);
-        this.x = x;
-        this.y = y;
-        this.health = health;
-        // this.collided = false;
-        this.width = tSize;
-        this.height = tSize;
-    }
+ class Enemy extends Entity{
+  constructor(x, y, health){
+      super(x, y, tSize, tSize);
+      this.x = x;
+      this.y = y - 14;
+      this.health = health;
+      // this.collided = false;
+      this.width = tSize;
+      this.height = tSize;
+  }
 
-    draw(ctx){
-        this.gravity();
-        ctx.fillStyle = "black";                    // **FILL** color inside the tiles
-        if(this.health === 1){
-            ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
-        }else if(this.health === 2){
-            ctx.strokeStyle = "#FCBB6D"             // burlywood (med) 
-        }else if(this.health === 3){
-            ctx.strokeStyle = "blanchedalmond"             // blanchedalmond (light)
-        }else{                         
-            ctx.strokeStyle = "#fff";               // normal color
-        }
-        ctx.shadowColor = "red";                // GLOW F1E6C1
-        ctx.shadowBlur = 6;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.lineJoin = "bevel";         // beveled edges
-        ctx.lineWidth = 4;              // how big the line width is
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
+  draw(ctx){
+      this.gravity();
+      ctx.fillStyle = "black";                    // **FILL** color inside the tiles
+      if(this.health === 1){
+          ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
+      }else if(this.health === 2){
+          ctx.strokeStyle = "#FCBB6D"             // burlywood (med) 
+      }else if(this.health === 3){
+          ctx.strokeStyle = "blanchedalmond"             // blanchedalmond (light)
+      }else{                         
+          ctx.strokeStyle = "#fff";               // normal color
+      }
+      ctx.shadowColor = "red";                // GLOW F1E6C1
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.lineJoin = "bevel";         // beveled edges
+      ctx.lineWidth = 4;              // how big the line width is
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.strokeRect(this.x, this.y, this.width, this.height);
 
-        // draw text
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 40px Arial"
-        ctx.textAlign="center"; 
-        ctx.textBaseline = "middle";
-        ctx.fillText(
-            this.health, 
-            this.x + this.width / 2, 
-            this.y + this.height / 1.95
-        )
+      // draw text
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 40px Arial"
+      ctx.textAlign="center"; 
+      ctx.textBaseline = "middle";
+      ctx.fillText(
+          this.health, 
+          this.x + this.width / 2, 
+          this.y + this.height / 1.95
+      )
 
-        enemyY = this.y;
-        enemyX = this.x;
-    }
+      enemyY = this.y;
+      enemyX = this.x;
+  }
 
-    takeDamage(damage) {
-        this.health -= damage;
-    }
+  takeDamage(damage) {
+      this.health -= damage;
+  }
 
-    isEnemyOffScreen(bullet) {
-        return bullet.y <= -bullet.height;
-    }
+  isEnemyOffScreen(bullet) {
+      return bullet.y <= -bullet.height;
+  }
 }
 
 /** ----------------------------------------------------------------------------
  * Helper functions -
  * 
- *
+ *  
  *
  ----------------------------------------------------------------------------- */
 
@@ -475,14 +484,14 @@ function randNum(min, max) {
 }
 
 function randomBoolean(){
-    return Math.random() < 0.5;
+    return Math.random() < 0.5;   // change to 1 to guarantee true (original value is 0.5)
 }
 
 
 /** ----------------------------------------------------------------------------
  * Collision detection -
  * 
- *                      Not working ... 
+ *                      
  *
  ----------------------------------------------------------------------------- */
 
@@ -539,16 +548,14 @@ function randomBoolean(){
  *      purpose: to randomly spawn tiles at set coordinates
  *      level is 5 rows * level
  * 
- * trashcan:
- * var snakeHeadW = 22;        //snake head width
- * var snakeTailW = 14;        //snake tail width
+ *
  ----------------------------------------------------------------------------- */
 
 
 
 let dividerW = 5;           //divider width
 let blockW = 100;           //block width
-let snakePositionY = 600;   //snake positon y
+
 let currentLevel = 2;         // current level
 let score = 0;
 let blockHPGen = randNum((1 * currentLevel), (10 * currentLevel));  // enemy hp
@@ -570,7 +577,7 @@ var levelData = {
     const tileWidth = (canvas.width / 5) - 2;  // we want 5 tiles of 113 across the width of screen
     const tileHeight = (canvas.height / 7) - 2; 
 
-    var stage = [];
+
 
 // function to control render of enemies happens once per level
 // two const cellwidth * column + cellheight * row
@@ -598,44 +605,92 @@ const enemies = [];
 function createStage(){
   for(let i = 0; i < 1; i++){
     if (randomBoolean()){
-      enemies.push(new Enemy(8, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+      enemies.push(new Enemy(2, i * tileWidth, randNum(1, 20)));      // line 1, 5 blocks per row
+      console.log(`createStage drew box 1`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      enemies.push(new Enemy((1 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      console.log(`createStage drew box 2`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      enemies.push(new Enemy((2 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      console.log(`createStage drew box 3`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      enemies.push(new Enemy((3 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      console.log(`createStage drew box 4`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+      enemies.push(new Enemy((4 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      console.log(`createStage drew box 5`);
     }
 
   }
 }
 
-function createNextStage(){
+
+/** ----------------------------------------------------------------------------
+ * Bug - 
+ * 
+ *          when asked to render tiles above canvas height, it only renders 2-5 every other row 
+ *  ----------------------------------------------------------------------------- */
+
+
+// function createNextStage(){
+//     for(let i = 0; i < 1; i++){
+//       if (randomBoolean()){
+//         enemies.push(new Enemy(2, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+//         console.log(`createNextStage drew box 1`);
+//       } 
+//       if (randomBoolean()){
+//         enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+//         console.log(`createNextStage drew box 2`);
+//       } 
+//       if (randomBoolean()){
+//         enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+//         console.log(`createNextStage drew box 3`);
+//       } 
+//       if (randomBoolean()){
+//         enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+//         console.log(`createNextStage drew box 4`);
+//       } 
+//       if (randomBoolean()){
+//         enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+//         console.log(`createNextStage drew box 5`);
+//       }
+  
+//     }
+//   }
+
+  function createNextStage(){
     for(let i = 0; i < 1; i++){
       if (randomBoolean()){
-        enemies.push(new Enemy(8, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+        enemies.push(new Enemy(4, (i * tSize) - tSize, randNum(1, 20)));      // line 1, 5 blocks per row
+        console.log(`createNextStage2 drew box 1`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        enemies.push(new Enemy((1 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        console.log(`createNextStage2 drew box 2`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        enemies.push(new Enemy((2 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        console.log(`createNextStage2 drew box 3`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        enemies.push(new Enemy((3 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        console.log(`createNextStage2 drew box 4`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        enemies.push(new Enemy((4 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 20)));
+        console.log(`createNextStage2 drew box 5`);
       }
   
     }
   }
+
+
+
+
 
 // test for visualization
 const enemies2 = [
@@ -705,7 +760,7 @@ const enemies2 = [
 //     }
 // }
 
-let lastLevelUpdate = 0;
+let lastLevelUpdate = 1;
 
 function gameLoop() {
     
@@ -749,7 +804,8 @@ function gameLoop() {
     enemies.forEach((enemy) => {
         if (player.alive && bulletController.collideWith(enemy)) {
           if (enemy.health <= 0) {
-
+            score += 10;
+            console.log(`Player obliterated 1 box, new score is ${score}`);
             const index = enemies.indexOf(enemy);
             enemies.splice(index, 1);
 
@@ -760,7 +816,7 @@ function gameLoop() {
         }
       });
 
-      if (enemyY >= tSize) {
+      if (enemyY >= 0) {
         createNextStage();
       }
 
