@@ -753,7 +753,7 @@ function createStage(){
 
       }
       if (randomBoolean()){
-        enemies.push(new Enemy((1 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
+        enemies.push(new Enemy((1 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 5)));
         console.log(`createNextStage2 drew box 2`);
       } 
       if (randomBoolean()){
@@ -761,7 +761,7 @@ function createStage(){
         console.log(`createNextStage2 drew box 3`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((3 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
+        enemies.push(new Enemy((3 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 6)));
         console.log(`createNextStage2 drew box 4`);
       } 
       if (randomBoolean()){
@@ -781,7 +781,9 @@ function createStage(){
  ----------------------------------------------------------------------------- */
 
  const closeIntro = document.getElementById('close-intro');
+ const closePopup = document.getElementById('close-popup');
  const introScreen = document.getElementById('intro-screen');
+ const introPopup = document.getElementById('popup');
 
  closeIntro.addEventListener(`click`, function () {
 
@@ -790,11 +792,20 @@ function createStage(){
 
   } else {
     introScreen.style.display = `none`;
-    main.style.display = `visible`;
-    menu.style.display = `block`;
+
   }
 });
 
+// closePopup.addEventListener(`click`, function () {
+
+//   if (introPopup.style.display === `flex`) {
+//     introPopup.style.display = `none`;
+
+//   } else {
+//     introPopup.style.display = `block`;
+
+//   }
+// });
 
  const start = document.getElementById('start');
  start.addEventListener('click', function(e) {
@@ -824,11 +835,12 @@ function createStage(){
 
  const music = document.getElementById('music');
  const audio = document.querySelector("audio");
+ let musicON = false;
 
  music.addEventListener('click', () => {
   console.log(`music button clicked!`);
   if (audio.paused) {
-    audio.volume = 0.2;
+    audio.volume = 0.1;
     audio.play();
     music.textContent = `Music OFF`;
 
@@ -836,7 +848,6 @@ function createStage(){
     audio.pause();
     music.textContent = `Music ON`;
   }
-  music.classList.add('fade');
 });
 
 
@@ -862,18 +873,23 @@ function createStage(){
 
 
  function togglePause() {
-     if (!paused)
-     {
+     if (!paused) {
          paused = true;
-         audio.pause();
-         music.textContent = `Music ON`;
          cancelAnimationFrame(gameLoop);
-     } else if (paused)
-     {
+        //  if(musicON === false){
+        //   audio.pause();
+        //   music.textContent = `Music ON`;
+        //   }
+
+     } else if (paused) {
         paused = false;
-        audio.play();
-        music.textContent = `Music OFF`;
         gameLoop();
+
+        // if(musicON === true){
+        // audio.play();
+        // music.textContent = `Music OFF`;
+        // }
+
      }
  
  }
