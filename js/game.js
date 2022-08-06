@@ -145,6 +145,8 @@ class Player extends Entity{
             const bulletX = this.x + this.width / 2;
             const bulletY = this.y;
             this.bulletController.shoot(bulletX, bulletY, speed, damage, delay);
+        } else {
+          console.log("not shooting")
         }
     }
 
@@ -238,40 +240,9 @@ class Player extends Entity{
 
 }
 
-// canvas.addEventListener('mousemove',mouseMove);
-
-// canvas.addEventListener('mouseout',mouseMove); 
-// canvas.addEventListener('mouseover',mouseMove); 
-// canvas.addEventListener("contextmenu", function(e){ e.preventDefault();}, false);
-
-// let mouseDown = false;
-// canvas.addEventListener('mousedown',mouseMove);
-// canvas.addEventListener('mouseup',mouseMove); 
-
-// canvas.onmousedown = function(e) {
-//   e.preventDefault();
-
-  
-onmousedown = (e) => {
-  e.preventDefault();
-    if (canvas.onmousedown) {
-      player.shootPressed = true;
-      player.shoot();
-      console.log(`shooting`, this.shootPressed);
-  } else if (this.canvas.onmouseup) {
-    player.shootPressed = false;
-  }
-}
 
 
-// }
 
-// if (canvas.onmousedown){
-//   player.shootPressed = true;
-
-// } else {
-//   player.shootPressed = false;
-// }
 
 
 
@@ -383,19 +354,45 @@ class Bullet extends Entity{
 }
 
 
+let bulletController = new BulletController(canvas);
+
+let player = new Player(
+  canvas.width / 2.2, 
+  canvas.height / 1.3,
+  bulletController
+);
+
+
+
+
+
 /** -------------------------------------------------------------
  *   Player Two constructor (WIP)
  * 
  *       mouse click
  *       adds power-ups for player one to overcome level difficulty?
- * 
+
  * -------------------------------------------------------------- */
- canvas.addEventListener('mousedown', function(e) {
-  getCursorPosition(canvas, e)
-})
+
+var mouseIsDown = false;
+canvas.onmousedown = function(e) {
+
+    player.shootPressed = true;
+    // console.log('mouse is down');
+}
+
+canvas.onmouseup = function(e) {
+
+    player.shootPressed = false;
+    // console.log('mouse is up');
+}
+
+
 
 let mouseX;
 let mouseY;
+
+
 
 function getCursorPosition(canvas, event) {
   const rect = canvas.getBoundingClientRect()
@@ -797,27 +794,61 @@ function createStage(){
 
 
 /** ----------------------------------------------------------------------------
- * Game start pause reset functions -
+ * Game start pause reset music functions -
  * 
  *                to pause the anxiety buildup
  ----------------------------------------------------------------------------- */
  const start = document.getElementById('start');
- start.addEventListener('click', gameLoop);
+ start.addEventListener('click', function(e) {
+  start.disabled = true;
+  resetClicked = false;
+  
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  bulletController.draw(ctx);
+  player.draw(ctx);
+
+    gameLoop();
+
+ });
 
  
  const reset = document.getElementById('reset');
- reset.addEventListener('click', clearScreen);
+ var resetClicked = false;
+
+ reset.addEventListener('click', function() {
+  // animationID = 0;
+  // animationID = cancelAnimationFrame(gameLoop);
+  resetClicked = true;
+  // clearScreen();
+ });
 
 
- const pause = document.getElementById('pause');
- pause.addEventListener('click', togglePause);
+//  const pause = document.getElementById('pause');
+//  pause.addEventListener('click', togglePause);
+
+ const music = document.querySelector("music");
+
 
  function clearScreen() {
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  player.speed = 10;
-  player.alive = true;
+  start.disabled = false;
+
+  lastLevelUpdate = 1;
+  bulletController = new BulletController(canvas);
+
+  player = new Player(
+    canvas.width / 2.2, 
+    canvas.height / 1.3,
+    bulletController
+  );
+
+
+  
+  // player.alive = true;
   enemies = [];
   score = 0;
 }
@@ -836,11 +867,13 @@ function createStage(){
  
  }
 
- window.addEventListener('keydown', function (e) {
-  if (e.code === "Space") {
-      togglePause();
-  }
-  });
+
+
+window.addEventListener('keydown', function (e) {
+    if (e.code === "Space") {
+        togglePause();
+    }
+});
 
 
 
@@ -881,14 +914,17 @@ function gameLoop() {
         bulletController.draw(ctx);
         player.draw(ctx);
 
+
         if (lastLevelUpdate < currentLevel){  // to ensure we only draw that stage once per game loop
           createStage();
           lastLevelUpdate = currentLevel;
         }
 
+        if (enemyY >= 0) {
+          createNextStage();
+        }
 
-    //test enemy
-    // new Enemy(100,100, "yellow", 10).draw(ctx);
+
 
     enemies.forEach((enemy) => {
         if (player.alive && bulletController.collideWith(enemy)) {
@@ -905,16 +941,18 @@ function gameLoop() {
         }
       });
 
-      if (enemyY >= 0) {
-        createNextStage();
+
+
+
+      if (player.alive && paused === false && !resetClicked) {
+        animationID = requestAnimationFrame(gameLoop);
+        console.log(`request animation ID: ${animationID}`);
+      } 
+      if (resetClicked) {
+        clearScreen();
       }
+      
 
-
-
-    if (player.alive && paused === false) {
-      animationID = requestAnimationFrame(gameLoop);
-    }
-    
 }
 
 
@@ -923,16 +961,6 @@ function gameLoop() {
 
 
 
-const bulletController = new BulletController(canvas);
-
-const player = new Player(
-    canvas.width / 2.2, 
-    canvas.height / 1.3,
-    bulletController
-);
-
-let playerX = player.x;
-let playerY = player.y;
 
 // gameLoop();
 
@@ -1081,6 +1109,47 @@ function createNextStage(){
   
     }
   }
+
+
+
+// canvas.addEventListener('mousemove',mouseMove);
+
+// canvas.addEventListener('mouseout',mouseMove); 
+// canvas.addEventListener('mouseover',mouseMove); 
+// canvas.addEventListener("contextmenu", function(e){ e.preventDefault();}, false);
+
+// let mouseDown = false;
+// canvas.addEventListener('mousedown',mouseMove);
+// canvas.addEventListener('mouseup',mouseMove); 
+
+// canvas.onmousedown = function(e) {
+//   e.preventDefault();
+
+  
+// onmousedown = (e) => {
+//   e.preventDefault();
+//     if (canvas.onmousedown) {
+//       player.shootPressed = true;
+//       player.shoot();
+//       console.log(`shooting`, this.shootPressed);
+//   }
+//   // else if (this.canvas.onmouseup) {
+//   //   player.shootPressed = false;
+//   // }
+// }
+
+
+// }
+
+// if (canvas.onmousedown){
+//   player.shootPressed = true;
+
+// } else {
+//   player.shootPressed = false;
+// }
+
+
+
 
 
 */
