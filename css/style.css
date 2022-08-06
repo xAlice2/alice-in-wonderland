@@ -1,3 +1,11 @@
+
+/* -------------------------------------------------------------
+    F O R M A T T I N G 
+
+                    font-family: 'Montserrat', sans-serif;
+
+-------------------------------------------------------------------------------------*/
+
 body {
     display:flex;
     flex-direction: column;
@@ -8,7 +16,40 @@ body {
 
 }
 
+button {
+    width: 150px;
+    /* background-color: #FFDCCC; */
+    border: solid 1px greenyellow;
+    color:#9B6A6C;
+    border: none;
+    border-radius: 3px;
+    margin: 1rem;
+    padding: 0.3rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 250ms ease-in-out, 
+                transform 100ms ease;
+}
+
+
+
+/* button:focus {
+
+    outline-offset: -4px;
+} */
+
+button:active {
+    transform: scale(1.1);
+}
+
+button:hover {
+    background: #c0626d;
+    color: #FFDCCC;
+}
+
 #game {
+    display: hidden;
     box-shadow: 7px 7px 40px #623636;
     border: 5px solid blueviolet;
     border-radius: 5px;

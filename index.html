@@ -6,13 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Montserrat:wght@100;200;300;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Montserrat:wght@100;200;300;500;600&display=swap" rel="stylesheet">
+    <script type="text/javascript"> 
+        document.addEventListener('click', function(e) { 
+            if(document.activeElement.toString() == '[object HTMLButtonElement]'){ 
+                document.activeElement.blur(); 
+            } 
+        });
+    </script>    
     <title>Document</title>
 </head>
 <body>
     <h1>game.exe</h1>
-    <!-- https://www.youtube.com/watch?v=i7FzA4NavDs -->
+    <aside id="aside__buttoncontainer">
+        <!-- <p>text</p> -->
+        <a href="#popup"><button id="help">Help</button></a>
+        <button id="start">Start</button>
+        <button id="reset">Reset</button>
+        <button id="pause">Pause</button>
+    </aside>
+    <div id="popup"></div>
+    <div id="darken"></div>
     <canvas id="game"></canvas>
     <script src="./js/game.js"></script>
 </body>

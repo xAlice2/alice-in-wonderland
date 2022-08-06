@@ -11,7 +11,10 @@ const playerTile = 50;
 const cw = canvas.width;
 const ch = canvas.height;
 
-let gravity = 2;
+let paused = false;
+let animationID;
+
+let gravity = 1.2;
 
 let enemyY;
 let enemyX;
@@ -66,9 +69,9 @@ class Player extends Entity{
         this.y = y;
         this.bulletController = bulletController;
         
-        this.speed = 10;                     // movement speed
-        this.alive = true;
-        this.health =  20;
+        this.speed = 10;                    // how fast player 1 moves
+        this.alive = true;                  // because starting with a game over doesn't make sense..
+        this.health =  20;                  // player health
         this.radius = 25;                   // radius of the player
         this.diameter = this.radius - 22; 
         this.wall = 30;
@@ -201,9 +204,12 @@ class Player extends Entity{
         if (e.code === "KeyD") {
           this.rightPressed = true;
         }
-        if (e.code === "Space") {
-          this.shootPressed = true;
-        }
+        // if (canvas.onmousedown) {
+        //   this.shootPressed = true;
+        // }
+        // if (e.code === "Space") {  // rerouting feature to mouse click
+        //   this.shootPressed = true;
+        // }
 
       };
     
@@ -220,14 +226,55 @@ class Player extends Entity{
         if (e.code === "KeyD") {
           this.rightPressed = false;
         }
-        if (e.code === "Space") {
-          this.shootPressed = false;
-        }
+        // if (canvas.onmouseup) {
+        //   this.shootPressed = false;
+        // }
+        // if (e.code === "Space") {  // rerouting feature to mouseclick
+        //   this.shootPressed = false;
+        // }
       };
 
 
 
 }
+
+// canvas.addEventListener('mousemove',mouseMove);
+
+// canvas.addEventListener('mouseout',mouseMove); 
+// canvas.addEventListener('mouseover',mouseMove); 
+// canvas.addEventListener("contextmenu", function(e){ e.preventDefault();}, false);
+
+// let mouseDown = false;
+// canvas.addEventListener('mousedown',mouseMove);
+// canvas.addEventListener('mouseup',mouseMove); 
+
+// canvas.onmousedown = function(e) {
+//   e.preventDefault();
+
+  
+onmousedown = (e) => {
+  e.preventDefault();
+    if (canvas.onmousedown) {
+      player.shootPressed = true;
+      player.shoot();
+      console.log(`shooting`, this.shootPressed);
+  } else if (this.canvas.onmouseup) {
+    player.shootPressed = false;
+  }
+}
+
+
+// }
+
+// if (canvas.onmousedown){
+//   player.shootPressed = true;
+
+// } else {
+//   player.shootPressed = false;
+// }
+
+
+
 /** ----------------------------------------------------------------------------
  * Bullet Construction -
  * 
@@ -339,8 +386,27 @@ class Bullet extends Entity{
 /** -------------------------------------------------------------
  *   Player Two constructor (WIP)
  * 
- *       -- adds power-ups for player one to overcome level difficulty
+ *       mouse click
+ *       adds power-ups for player one to overcome level difficulty?
+ * 
  * -------------------------------------------------------------- */
+ canvas.addEventListener('mousedown', function(e) {
+  getCursorPosition(canvas, e)
+})
+
+let mouseX;
+let mouseY;
+
+function getCursorPosition(canvas, event) {
+  const rect = canvas.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+  mouseX = x;
+  mouseY = y;
+  console.log("x: " + x + " y: " + y)
+}
+
+
 
  let colors = [
     {r: 44, g: 62, b: 80},
@@ -349,11 +415,10 @@ class Bullet extends Entity{
     {r: 52, g: 152, b: 219}
     ];
 
-    class Particle extends Player{
+    class Particle{
         constructor(x, y, dx, dy, radius, colornumber) {
-            super(player.x, player.y, playerTile, playerTile);
-            this.x = x;
-            this.y = y;
+            this.x = mouseX;
+            this.y = mouseY;
             this.dx = dx;
             this.dy = dy;
             this.radius = radius;
@@ -452,10 +517,80 @@ class Bullet extends Entity{
   }
 }
 
+/** ================================================================
+ * Future feature: DIVIDERS!
+ * 
+ *        -dividers are walls that spawn in the middle of a tile
+ *        -does not damage player when collide
+ *        -forces player to pick a lane to destroy tiles
+ * 
+ ===================================================================*/
+
+ class Walls extends Entity{
+  constructor(x, y){
+      super(x, y, tSize, tSize);
+      this.x = x;
+      this.y = y;
+      // this.collided = false;
+      this.width = tSize;
+      this.height = tSize;
+  }
+
+  draw(ctx){
+      this.gravity();
+      ctx.fillStyle = "black";                    // **FILL** color inside the tiles
+      if(this.health === 1){
+          ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
+      }else if(this.health === 2){
+          ctx.strokeStyle = "#FCBB6D"             // burlywood (med) 
+      }else if(this.health === 3){
+          ctx.strokeStyle = "blanchedalmond"             // blanchedalmond (light)
+      }else{                         
+          ctx.strokeStyle = "#fff";               // normal color
+      }
+      ctx.shadowColor = "red";                // GLOW F1E6C1
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.lineJoin = "bevel";         // beveled edges
+      ctx.lineWidth = 4;              // how big the line width is
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+      // draw text
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 40px Arial"
+      ctx.textAlign="center"; 
+      ctx.textBaseline = "middle";
+      ctx.fillText(
+          this.health, 
+          this.x + this.width / 2, 
+          this.y + this.height / 1.95
+      )
+
+      enemyY = this.y;
+      enemyX = this.x;
+  }
+
+  takeDamage(damage) {
+      this.health -= damage;
+  }
+
+  isEnemyOffScreen(bullet) {
+      return bullet.y <= -bullet.height;
+  }
+}
+
+
+
+
+
+
+
 /** ----------------------------------------------------------------------------
  * Helper functions -
  * 
- *  
+ *              Mostly randomization generators
  *
  ----------------------------------------------------------------------------- */
 
@@ -542,12 +677,19 @@ function randomBoolean(){
 }
 
 
+
+
+
+
+
+
 /** ----------------------------------------------------------------------------
  * Tile Spawn Logic -
  * 
  *      purpose: to randomly spawn tiles at set coordinates
  *      level is 5 rows * level
- * 
+ *      cw = 572;
+ *      ch = 803;
  *
  ----------------------------------------------------------------------------- */
 
@@ -574,61 +716,44 @@ var levelData = {
 
 }; 		
 
-    const tileWidth = (canvas.width / 5) - 2;  // we want 5 tiles of 113 across the width of screen
-    const tileHeight = (canvas.height / 7) - 2; 
 
 
 
-// function to control render of enemies happens once per level
-// two const cellwidth * column + cellheight * row
+ 
 
 
 
-/**--------------------------------------------------------
-cw = 572;
-ch = 803;
- */
-
-/** ================================================================
- * Future feature: DIVIDERS!
- * 
- *        -dividers are walls that spawn in the middle of a tile
- *        -does not damage player when collide
- *        -forces player to pick a lane to destroy tiles
- * 
- ===================================================================*/
-
-
-
-
-
+ 
 // math: xy * 113 = 5 blocks per row
+                                                  // we want a 5 x 7 grid
+const tileWidth = (canvas.width / 5) - 2;         // this creates 5 tiles across the width of screen
+const tileHeight = (canvas.height / 7) - 2;       // this creates 7 tiles down the length of the screen
+const margin = 4;                                 // creates margins around the tiles
 
-const enemies = [];
+let enemies = [];
 
 function createStage(){
   for(let i = 0; i < 1; i++){
     if (randomBoolean()){
-      enemies.push(new Enemy(2, i * tileWidth, randNum(1, 20)));      // line 1, 5 blocks per row
+      enemies.push(new Enemy(2, i * tileWidth, randNum(1, 8)));      // line 1, 5 blocks per row
       console.log(`createStage drew box 1`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((1 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      enemies.push(new Enemy((1 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
       console.log(`createStage drew box 2`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((2 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      enemies.push(new Enemy((2 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
       console.log(`createStage drew box 3`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((3 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      enemies.push(new Enemy((3 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
       console.log(`createStage drew box 4`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((4 * tileWidth) + 4, i * tileWidth, randNum(1, 20)));
+      enemies.push(new Enemy((4 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
       console.log(`createStage drew box 5`);
     }
-
   }
 }
 
@@ -640,63 +765,253 @@ function createStage(){
  *  ----------------------------------------------------------------------------- */
 
 
-// function createNextStage(){
-//     for(let i = 0; i < 1; i++){
-//       if (randomBoolean()){
-//         enemies.push(new Enemy(2, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
-//         console.log(`createNextStage drew box 1`);
-//       } 
-//       if (randomBoolean()){
-//         enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-//         console.log(`createNextStage drew box 2`);
-//       } 
-//       if (randomBoolean()){
-//         enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-//         console.log(`createNextStage drew box 3`);
-//       } 
-//       if (randomBoolean()){
-//         enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-//         console.log(`createNextStage drew box 4`);
-//       } 
-//       if (randomBoolean()){
-//         enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
-//         console.log(`createNextStage drew box 5`);
-//       }
-  
-//     }
-//   }
 
   function createNextStage(){
     for(let i = 0; i < 1; i++){
       if (randomBoolean()){
-        enemies.push(new Enemy(4, (i * tSize) - tSize, randNum(1, 20)));      // line 1, 5 blocks per row
+        enemies.push(new Enemy(4, (i * tSize) - tSize, randNum(1, 8)));      // line 1, 5 blocks per row
         console.log(`createNextStage2 drew box 1`);
-      } 
+      } else {
+
+      }
       if (randomBoolean()){
-        enemies.push(new Enemy((1 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
+        enemies.push(new Enemy((1 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
         console.log(`createNextStage2 drew box 2`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((2 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
+        enemies.push(new Enemy((2 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
         console.log(`createNextStage2 drew box 3`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((3 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
+        enemies.push(new Enemy((3 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
         console.log(`createNextStage2 drew box 4`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((4 * tileWidth) + 4, (i * tSize) - tSize, randNum(1, 10)));
+        enemies.push(new Enemy((4 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
         console.log(`createNextStage2 drew box 5`);
       }
-  
     }
+    score += 10;
   }
 
 
 
+/** ----------------------------------------------------------------------------
+ * Game start pause reset functions -
+ * 
+ *                to pause the anxiety buildup
+ ----------------------------------------------------------------------------- */
+ const start = document.getElementById('start');
+ start.addEventListener('click', gameLoop);
+
+ 
+ const reset = document.getElementById('reset');
+ reset.addEventListener('click', clearScreen);
 
 
-// test for visualization
+ const pause = document.getElementById('pause');
+ pause.addEventListener('click', togglePause);
+
+ function clearScreen() {
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  player.speed = 10;
+  player.alive = true;
+  enemies = [];
+  score = 0;
+}
+
+
+ function togglePause() {
+     if (!paused)
+     {
+         paused = true;
+         cancelAnimationFrame(gameLoop);
+     } else if (paused)
+     {
+        paused = false;
+        gameLoop();
+     }
+ 
+ }
+
+ window.addEventListener('keydown', function (e) {
+  if (e.code === "Space") {
+      togglePause();
+  }
+  });
+
+
+
+
+
+
+/** ----------------------------------------------------------------------------
+ * Game Loops -
+ * 
+ *          runs like a hamster on a wheel
+ ----------------------------------------------------------------------------- */
+
+//  var amountofballs = 5;
+//  var particleArray = [];
+
+//  function init() {
+//     for (var i = 0; i < amountofballs; i++) {
+//         var radius = (Math.random()*5);
+//         var x = mouse.x;
+//         var y = mouse.y;
+//         var dx = (Math.random()-0.5)*5;
+//         var dy = (Math.random()-0.5)*5;
+//         var colornumber = Math.floor(Math.random()*4);
+
+//         particleArray.push(new Particle(x, y, dx, dy, radius, colornumber));
+//     }
+// }
+
+let lastLevelUpdate = 1;
+
+function gameLoop() {
+
+        
+        // enemies = [];
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        ctx.fillStyle = "black";
+        // ctx.fillRect(0, 0, canvas.width, canvas.height);
+        bulletController.draw(ctx);
+        player.draw(ctx);
+
+        if (lastLevelUpdate < currentLevel){  // to ensure we only draw that stage once per game loop
+          createStage();
+          lastLevelUpdate = currentLevel;
+        }
+
+
+    //test enemy
+    // new Enemy(100,100, "yellow", 10).draw(ctx);
+
+    enemies.forEach((enemy) => {
+        if (player.alive && bulletController.collideWith(enemy)) {
+          if (enemy.health <= 0) {
+            score += 10;
+            console.log(`Player obliterated 1 box, new score is ${score}`);
+            const index = enemies.indexOf(enemy);
+            enemies.splice(index, 1);
+
+          }
+        } else {
+            player.collideWith(enemy);
+            enemy.draw(ctx);
+        }
+      });
+
+      if (enemyY >= 0) {
+        createNextStage();
+      }
+
+
+
+    if (player.alive && paused === false) {
+      animationID = requestAnimationFrame(gameLoop);
+    }
+    
+}
+
+
+
+
+
+
+
+const bulletController = new BulletController(canvas);
+
+const player = new Player(
+    canvas.width / 2.2, 
+    canvas.height / 1.3,
+    bulletController
+);
+
+let playerX = player.x;
+let playerY = player.y;
+
+// gameLoop();
+
+/** =====================================================================================
+ *    O L D  C O D E
+ * 
+ *          Anything I didn't want to delete just yet for various reasons, lives here
+ * 
+========================================================================================= 
+
+//replaced with requestAnimationFrame
+setInterval(gameLoop, 1000 / 90);
+
+
+// Original styling function
+function setCommonStyle() {
+    ctx.shadowColor = "yellow";
+    ctx.shadowBlur = 20;            // how much shadow is blurred
+    ctx.lineJoin = "bevel";         // beveled edges
+    ctx.lineWidth = 5;              // how big the line width is
+}
+
+
+
+// failed attemps at core game logic
+var rows = 5;                       // 5 tiles across
+var cols = 5 * levelData.number;    // tiles down
+
+var padding = 2;
+var w = (cw - padding * cols) / cols;
+var h = (ch - padding * rows) / rows;
+
+// level 1 is x = (1 * levelData.number) by y = (levelData.number * currentLevel) -> 5 across, 5 down = total 35 items in the levelContainer array
+// level 2 is x = (1 * levelData.number) by y = (levelData.number * currentLevel)  
+// something something levelGridContainer.push(randNumGen)
+
+let blocksPerRow = 4; //levelData.block_arr[randNum(0, 5)];
+let dividerPerLine = 3; //levelData.divider_arr[randNum(0, 4)];
+
+let levelGridContainer = [];
+function levelGenerator() {
+    for (var y = 0; y < rows; y++) {
+        for (var x = 0; x < cols; x++) {
+            console.log(`coordinate ${x}x, ${y}y`);
+            levelGridContainer.push(blockNumGen);
+        }
+    }
+};
+
+var num = [0,0,0].map(function(el,i){
+    return this+i;
+    },Math.floor(Math.random()*5));
+
+    levelGridContainer.push(new Platform({x:posX, y:posY}));
+
+
+    var wid = can.width,
+    hei = can.height,
+    numPlatforms = 14,
+    platforms = [],
+    hash = {};
+
+for(var i = 0; i < numPlatforms; i++){
+  var posX = Math.floor(Math.random()*(wid-tileWidth)/tileWidth) * tileWidth,
+    posY = Math.floor(Math.random()*(hei-tileHeight)/tileHeight) * tileHeight;
+  
+  while (hash[posX + 'x' + posY]){
+    posX = Math.floor(Math.random()*wid/tileWidth) * tileWidth;
+    posY = Math.floor(Math.random()*hei/tileHeight) * tileHeight;
+  }
+  
+  hash[posX + 'x' + posY] = 1; 
+  platforms.push(({x:posX, y:posY}, tileWidth, tileHeight));
+}
+
+
+
+
+// explicit xy coordinates for visualization purposes
 const enemies2 = [
     new Enemy(10, 10, randNum(1, 20)),       // line 1, 5 blocks per row
     new Enemy(123, 10, randNum(1, 20)),
@@ -738,213 +1053,34 @@ const enemies2 = [
 
 
 
-
-
-
-
-/** ----------------------------------------------------------------------------
- * Game Loops -
- * 
- *          runs like a hamster on a wheel
- ----------------------------------------------------------------------------- */
-
-//  var amountofballs = 5;
-//  var particleArray = [];
-
-//  function init() {
-//     for (var i = 0; i < amountofballs; i++) {
-//         var radius = (Math.random()*5);
-//         var x = mouse.x;
-//         var y = mouse.y;
-//         var dx = (Math.random()-0.5)*5;
-//         var dy = (Math.random()-0.5)*5;
-//         var colornumber = Math.floor(Math.random()*4);
-
-//         particleArray.push(new Particle(x, y, dx, dy, radius, colornumber));
-//     }
-// }
-
-let lastLevelUpdate = 1;
-
-function gameLoop() {
-    
-
-        // ctx.clearRect(0, 0, innerWidth, innerHeight);
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        bulletController.draw(ctx);
-        player.draw(ctx);
-
-        if (lastLevelUpdate < currentLevel){  // to ensure we only draw that stage once per game loop
-          createStage();
-          lastLevelUpdate = currentLevel;
-        }
-
-        // levelGenerator();
-
-        // for (var i = 0; i < particleArray.length; i++) {
-        //     particleArray[i].update();
-        // }
-  
-
-    // current level variables
-    // gameData.level_arr = [];
-	// gameData.block_arr = [];
-	// gameData.divider_arr = [];
-
-
-	// gameData.tailCount = 1;
-	// gameData.create = false;
-	// gameData.gridType = 1;
-
-	// // gameData.timer = new Date();
-	// gameData.moveSpeed = levelData.moveSpeed;
-	// gameData.gridCount = 0;
-	// gameData.number = levelData.number;
-
-    //test enemy
-    // new Enemy(100,100, "yellow", 10).draw(ctx);
-
-    enemies.forEach((enemy) => {
-        if (player.alive && bulletController.collideWith(enemy)) {
-          if (enemy.health <= 0) {
-            score += 10;
-            console.log(`Player obliterated 1 box, new score is ${score}`);
-            const index = enemies.indexOf(enemy);
-            enemies.splice(index, 1);
-
-          }
-        } else {
-            player.collideWith(enemy);
-            enemy.draw(ctx);
-        }
-      });
-
-      if (enemyY >= 0) {
-        createNextStage();
-      }
-
-    // for (var i = 0; i < 3; i++) {
-    //     spawnBalls();
-    // }
-    
-    // function spawnBalls() {
-    //     for (var i = 0; i < amoutofballs; i++) {
-    //         var radius = (Math.random()*5);
-    //         var x = this.x;
-    //         var y = this.y;
-    //         var dx = (Math.random()-0.5)*5;
-    //         var dy = (Math.random()-0.5)*5;
-    //         var colornumber = Math.floor(Math.random()*4);
-    
-    //         particleArray.push(new Particle(x, y, dx, dy, radius, colornumber));
-    //     }
-    // }
-
-    if (player.alive) {
-      requestAnimationFrame(gameLoop);
-    }
-
-    // requestAnimationFrame(gameLoop);
-    
-}
-
-
-// window.addEventListener("mousemove", function(e) {
-//     mouse.x = e.x;
-//     mouse.y = e.y;
-
-//     spawnBalls();
-// });
-
-
-
-
-const bulletController = new BulletController(canvas);
-
-const player = new Player(
-    canvas.width / 2.2, 
-    canvas.height / 1.3,
-    bulletController
-);
-
-let playerX = player.x;
-let playerY = player.y;
-
-gameLoop();
-
-/**
- * Old Code
- * 
- */
-
-// setInterval(gameLoop, 1000 / 90);
-
-// function setCommonStyle() {
-//     ctx.shadowColor = "yellow";
-//     ctx.shadowBlur = 20;            // how much shadow is blurred
-//     ctx.lineJoin = "bevel";         // beveled edges
-//     ctx.lineWidth = 5;              // how big the line width is
-// }
-
-
-
-// var rows = 5;                       // 5 tiles across
-// var cols = 5 * levelData.number;    // tiles down
-
-// var padding = 2;
-// var w = (cw - padding * cols) / cols;
-// var h = (ch - padding * rows) / rows;
-
-// // level 1 is x = (1 * levelData.number) by y = (levelData.number * currentLevel) -> 5 across, 5 down = total 35 items in the levelContainer array
-// // level 2 is x = (1 * levelData.number) by y = (levelData.number * currentLevel)  
-// // something something levelGridContainer.push(randNumGen)
-
-// let blocksPerRow = 4; //levelData.block_arr[randNum(0, 5)];
-// let dividerPerLine = 3; //levelData.divider_arr[randNum(0, 4)];
-
-// let levelGridContainer = [];
-// function levelGenerator() {
-//     for (var y = 0; y < rows; y++) {
-//         for (var x = 0; x < cols; x++) {
-//             console.log(`coordinate ${x}x, ${y}y`);
-//             levelGridContainer.push(blockNumGen);
-//         }
-//     }
-// };
-
-// var num = [0,0,0].map(function(el,i){
-//     return this+i;
-//     },Math.floor(Math.random()*5));
-
-//     levelGridContainer.push(new Platform({x:posX, y:posY}));
-
-
-//     var wid = can.width,
-//     hei = can.height,
-//     numPlatforms = 14,
-//     platforms = [],
-//     hash = {};
-
-// for(var i = 0; i < numPlatforms; i++){
-//   var posX = Math.floor(Math.random()*(wid-tileWidth)/tileWidth) * tileWidth,
-//     posY = Math.floor(Math.random()*(hei-tileHeight)/tileHeight) * tileHeight;
-  
-//   while (hash[posX + 'x' + posY]){
-//     posX = Math.floor(Math.random()*wid/tileWidth) * tileWidth;
-//     posY = Math.floor(Math.random()*hei/tileHeight) * tileHeight;
-//   }
-  
-//   hash[posX + 'x' + posY] = 1; 
-//   platforms.push(({x:posX, y:posY}, tileWidth, tileHeight));
-// }
-
-/**
- *  shuffle block array
- *  shuffle divider array
- *  shuffle gap array
- *  push randNum's generated numbers into level container
- */
-
     // enemy constructor = x,y,health
 
+original code
+function createNextStage(){
+    for(let i = 0; i < 1; i++){
+      if (randomBoolean()){
+        enemies.push(new Enemy(2, i * tileHeight, randNum(1, 20)));      // line 1, 5 blocks per row
+        console.log(`createNextStage drew box 1`);
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((1 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        console.log(`createNextStage drew box 2`);
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((2 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        console.log(`createNextStage drew box 3`);
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((3 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        console.log(`createNextStage drew box 4`);
+      } 
+      if (randomBoolean()){
+        enemies.push(new Enemy((4 * tileWidth) + 4, i * tileHeight, randNum(1, 20)));
+        console.log(`createNextStage drew box 5`);
+      }
+  
+    }
+  }
+
+
+*/
