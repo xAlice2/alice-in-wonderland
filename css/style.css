@@ -158,7 +158,6 @@ button:hover {
     transition: opacity 500ms;
     visibility:hidden;
     opacity: 0;
-    
   }
   .overlay:target {
     visibility: visible;
@@ -170,7 +169,7 @@ button:hover {
     padding: 20px;
     top: 30%;
     /* left: 50%; */
-    background: bisque;
+    background: rgb(255, 255, 255);
     border-radius: 5px;
     /* width: 30%;
     height: 30%; */
@@ -178,6 +177,7 @@ button:hover {
     align-items: center;
     /* position: relative; */
     transition: all 5s ease-in-out;
+    box-shadow: 2px 4px 20px #807b7b;
   }
   
   .popup h2 {
@@ -211,4 +211,6 @@ button:hover {
 
   footer {
     text-align: center;
+    margin-bottom: 4rem;
+    font-size: 15px;
   }
