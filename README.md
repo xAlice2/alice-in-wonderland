@@ -11,8 +11,8 @@ The objective is simple - all that you do is clear the blocks on the screen by s
 
 
 
-## Original Concept: 
-The original concept of the game 
+## Concept: 
+The original concept of the game was a snake vs block shooter which had walls forced you into various lanes as an added level of challenge. So when I say "failing successfully", I meant reworking each failure into a part of the game. I think this is relatable to everyone who are new to coding. Even the UI had many changes, what it 
 
 
 ## Wireframe:
