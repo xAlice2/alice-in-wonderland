@@ -5,7 +5,9 @@
                     font-family: 'Montserrat', sans-serif;
 
 -------------------------------------------------------------------------------------*/
-
+* {
+    margin: 0;
+}
 body {
     display:flex;
     flex-direction: column;
@@ -16,20 +18,104 @@ body {
 
 }
 
+p {
+    margin: 2rem;
+}
+
+/* -------------------------------------------------------------
+    I N T R O - S C R E E N
+
+                    font-family: 'Montserrat', sans-serif;
+
+-------------------------------------------------------------------------------------*/
+
+
+
+#intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    z-index: 1;                 /* bringing to front of everything*/
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    transition: 1s;
+    padding: 2rem;
+    text-align: center;
+    color: rgb(93, 93, 93);
+}
+#intro-content {
+    margin-top: 10%;
+    width: 80%;
+}
+#intro__fade-in {
+    font-family:'Roboto';
+    font-size: 70px;
+    font-weight:500;
+    opacity:0;  /* make things invisible upon start */
+    font-size:70px;
+    animation:fadeIn ease-in 1;
+    animation-fill-mode:forwards;
+    animation-duration:1.4s;
+  }
+
+.intro__fade-in-delayed {
+    opacity:0;  
+    animation:fadeIn ease-in 1;
+    animation-fill-mode:forwards;
+    animation-duration:1.4s;
+    animation-delay: 1.7s;
+    margin: left 100%;
+    padding-top: 15px;
+    font-size:20px;
+  }
+
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .centered-paragraph {
+    margin-bottom: 4rem;
+  }
+ .left-paragraph {
+    text-align: left;
+ } 
+
+ #close-intro {
+    margin-top: 3rem;
+ }
+
+#container {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    height: 100vh;
+    margin-top: 6%;
+}
+
+#aside__buttoncontainer {
+    margin-top: 3rem;
+    /* margin-bottom: 1rem; */
+}
+
 button {
     width: 150px;
     /* background-color: #FFDCCC; */
     border: solid 1px greenyellow;
-    color:#9B6A6C;
+    color:#9b6a93;
     border: none;
     border-radius: 3px;
     margin: 1rem;
-    padding: 0.3rem;
+    padding: 0.4rem;
     cursor: pointer;
+    font-size: 1.2em;
     text-align: center;
     text-decoration: none;
     transition: background 250ms ease-in-out, 
                 transform 100ms ease;
+    box-shadow: 2px 4px 10px #807b7b;
 }
 
 
@@ -44,8 +130,9 @@ button:active {
 }
 
 button:hover {
-    background: #c0626d;
-    color: #FFDCCC;
+    background: #ba9dab;
+    color: #f7eae4;
+    
 }
 
 #game {
@@ -55,4 +142,73 @@ button:hover {
     border-radius: 5px;
     padding-left: 12px;
     background-color: black;
+    margin: 3rem;
 }
+
+
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    transition: opacity 500ms;
+    visibility:hidden;
+    opacity: 0;
+    
+  }
+  .overlay:target {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .popup {
+    margin: 10rem;
+    padding: 20px;
+    top: 30%;
+    /* left: 50%; */
+    background: bisque;
+    border-radius: 5px;
+    /* width: 30%;
+    height: 30%; */
+    flex-direction: column;
+    align-items: center;
+    /* position: relative; */
+    transition: all 5s ease-in-out;
+  }
+  
+  .popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
+  }
+  .popup .close {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+  }
+  .popup .close:hover {
+    color: #fb6376;
+  }
+  /* .popup {
+    max-height: 40%;
+    overflow: auto; 
+  } */
+  .content p {
+    text-align:justify;                 /* do we like .. ? */
+    margin-top: 0.5rem;
+    padding: 1rem;
+    color: grey;
+  }
+
+  footer {
+    text-align: center;
+  }

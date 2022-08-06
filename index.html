@@ -5,9 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/style.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Montserrat:wght@100;200;300;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Montserrat:wght@100;200;300;500;600&family=Roboto:wght@100;300;400&display=swap" rel="stylesheet">
+    <audio src="./media/scottholmesmusic-mellow-lo-fi.mp3" type="audio/mpeg" preload loop></audio>
     <script type="text/javascript"> 
         document.addEventListener('click', function(e) { 
             if(document.activeElement.toString() == '[object HTMLButtonElement]'){ 
@@ -15,20 +17,77 @@
             } 
         });
     </script>    
-    <title>Document</title>
+    <title>Lo-fi Endless Shooter</title>
 </head>
 <body>
-    <h1>game.exe</h1>
-    <aside id="aside__buttoncontainer">
-        <!-- <p>text</p> -->
-        <a href="#popup"><button id="help">Help</button></a>
-        <button id="start">Start</button>
-        <button id="reset">Reset</button>
-        <button id="audio">Audio</button>
-    </aside>
-    <div id="popup"></div>
-    <div id="darken"></div>
-    <canvas id="game"></canvas>
-    <script src="./js/game.js"></script>
+    <div id="intro-screen">
+        <div id="intro-content">        
+            <h1 id="intro__fade-in">Hello.</h1>
+            <div class="intro__fade-in-delayed">
+                <div class="centered-paragraph">
+                    <p>
+                        This game was made with a lot of time, help, <strike>sanity</strike> and love from supportive friends, classmates and teachers.
+                    </p>
+                    <p>
+                    <b>I labored so that you don't have to.</b>
+                    </p>
+                </div>
+                <div class="left-paragraph">
+                    <p>
+                        This is a very simple, no-frills, endless tile game. Shoot the never-ending numbered tiles till they disappear. </p>
+                        
+                    <p> 
+                        <strong>Player 1:</strong> Use <strong>WASD</strong> to move around the screen but avoid hitting the tiles or your HP will drop!</p>
+                    <p>
+                        <strong>Player 2</strong> if available, hold down the <strong>left mouse button</strong> to shoot the tiles.
+                    </p>
+                    <p>
+                        Turn on the music by toggling on <strong>Music ON</strong> for enhanced experience.
+                    </p>
+                    <p>
+                        Or take a break and <strong>press the spacebar</strong> to pause the game.
+                    </p>
+        
+                    <p>
+                        When you're ready, click <strong>Close</strong> to be taken to the game screen. If you forget the instructions, click <b>Help</b> to re-read the instructions!
+                    </p>
+                </div>
+
+                <p>I hope you enjoy my simple game.</p>
+            </div>
+            <button id="close-intro">Close</button>
+        </div>
+
+    </div>
+    <div id="container">
+        <h1>Lo-fi Endless Shooter</h1>
+        <aside id="aside__buttoncontainer">
+            <a href="#popup1"><button id="help">Help</button></a>
+            <button id="start">Start</button>
+            <button id="reset">Reset</button>
+            <button id="music">Music ON</button>
+        </aside>
+
+
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <h2>Instructions</h2>
+                <a class="close" href="#">&times;</a>
+                <div class="content">
+                    <p>Shoot the numbered tiles till they disappear. Use WASD to move around the screen but avoid hitting the tiles or your HP will drop!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="popup"></div>
+        <div id="darken"></div>
+        <canvas id="game"></canvas>
+        <footer>(c) 2022 made by Alice, with lots of <strike>madness</strike> love.<br>
+        Music by Scott Holmes, "Mellow lo-fi"</footer>
+        <script src="./js/game.js"></script>
+    </div>
 </body>
 </html>
+
+<!-- <h1>Instructions</h1>
+<p>Shoot the numbered tiles till they disappear. Use WASD to move around the screen but avoid hitting the tiles or your HP will drop!</p> -->

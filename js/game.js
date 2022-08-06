@@ -3,24 +3,27 @@ const ctx = canvas.getContext("2d");
 
 canvas.width = 580;
 canvas.height = 800;
-
-const tSize = canvas.width / 5 - 15;
-const playerTile = 50;
-//row = 114.6s
-
 const cw = canvas.width;
 const ch = canvas.height;
 
-let paused = false;
-let animationID;
 
-let gravity = 1.2;
+
+const tSize = canvas.width / 5 - 15;
+const playerTile = 50;
 
 let enemyY;
 let enemyX;
 
 
-var mouse = {
+
+let paused = false;
+let animationID;
+let gravity = 1.2;            // speed at which the blocks fall
+
+
+
+
+var mouse = {                 // future use
     x: window.innerWidth/2,
     y: window.innerHeight/2
 }
@@ -29,15 +32,7 @@ var mouse = {
 
 
 
-// const amountofballs = 5;
-// let particleArray = [];
 
-// class SnakePart{
-//     constructor(x,y){
-//       this.x = x;
-//       this.y = y;
-//     }
-//   }
 
 class Entity{
     constructor(x,y,height,width){
@@ -93,7 +88,7 @@ class Player extends Entity{
         ctx.fillStyle = "black";
 
         /** ============================================================
-         * code for rectangle player shape
+         * code for square player shape
          * 
          
             ctx.shadowOffsetX = 0;
@@ -206,10 +201,7 @@ class Player extends Entity{
         if (e.code === "KeyD") {
           this.rightPressed = true;
         }
-        // if (canvas.onmousedown) {
-        //   this.shootPressed = true;
-        // }
-        // if (e.code === "Space") {  // rerouting feature to mouse click
+        // if (e.code === "Space") {  // rerouted spacebar to mouse click
         //   this.shootPressed = true;
         // }
 
@@ -228,10 +220,7 @@ class Player extends Entity{
         if (e.code === "KeyD") {
           this.rightPressed = false;
         }
-        // if (canvas.onmouseup) {
-        //   this.shootPressed = false;
-        // }
-        // if (e.code === "Space") {  // rerouting feature to mouseclick
+        // if (e.code === "Space") {  // rerouted spacebar to mouseclick
         //   this.shootPressed = false;
         // }
       };
@@ -318,9 +307,6 @@ class Bullet extends Entity{
         this.speed = speed;
         this.damage = damage;
 
-        // this.width = 5;
-        // this.height = 15;
-        
         this.color = "yellow";
     }
 
@@ -367,11 +353,11 @@ let player = new Player(
 
 
 /** -------------------------------------------------------------
- *   Player Two constructor (WIP)
+ *   Player Two -
  * 
- *       mouse click
- *       adds power-ups for player one to overcome level difficulty?
-
+ *        mouse click shooting (for now)
+ *       
+ *  
  * -------------------------------------------------------------- */
 
 var mouseIsDown = false;
@@ -394,6 +380,8 @@ let mouseY;
 
 
 
+
+
 function getCursorPosition(canvas, event) {
   const rect = canvas.getBoundingClientRect()
   const x = event.clientX - rect.left
@@ -404,49 +392,55 @@ function getCursorPosition(canvas, event) {
 }
 
 
+/**========================================================
+ * Future idea
+ * 
+ *          particle trail for player 1
+ * 
+===========================================================*/ 
+//  let colors = [
+//     {r: 44, g: 62, b: 80},
+//     {r: 231, g: 76, b: 60},
+//     {r: 236, g: 240, b: 241},
+//     {r: 52, g: 152, b: 219}
+//     ];
 
- let colors = [
-    {r: 44, g: 62, b: 80},
-    {r: 231, g: 76, b: 60},
-    {r: 236, g: 240, b: 241},
-    {r: 52, g: 152, b: 219}
-    ];
+//     class Particle extends Player{
+//         constructor(x, y, size, colornumber, weight) {
+//             this.x = x;
+//             this.y = y;
+//             // this.dx = dx;
+//             // this.dy = dy;
 
-    class Particle{
-        constructor(x, y, dx, dy, radius, colornumber) {
-            this.x = mouseX;
-            this.y = mouseY;
-            this.dx = dx;
-            this.dy = dy;
-            this.radius = radius;
-            this.opacity = 1;
-            this.colornumber = colornumber;
+//             this.colornumber = colornumber;
+//             this.weight = weight;
+//             this.opacity = 1;
 
 
-            this.draw = function() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, false, Math.PI*2);
-                ctx.fillStyle = "rgba("+colors[this.colornumber].r+","+colors[this.colornumber].g+","+colors[this.colornumber].b+","+this.opacity+")";
-                ctx.fill();
-            }
+//             this.draw = function() {
+//                 ctx.beginPath();
+//                 ctx.arc(this.x, this.y, this.size, Math.PI * 2, false);
+//                 ctx.fillStyle = "rgba("+colors[this.colornumber].r+","+colors[this.colornumber].g+","+colors[this.colornumber].b+","+this.opacity+")";
+//                 ctx.fill();
+//             }
 
-            if (player.x >= 0) {
-                this.update = function() {
-                    for (var i = 0; i < particleArray.length; i++) {
-                        if(particleArray[i].opacity < 0) {
-                            particleArray.splice(i, 1);
-                        }
-                    }
+//             if (player.x >= 0) {
+//                 this.update = function() {
+//                     for (var i = 0; i < particleArray.length; i++) {
+//                         if(particleArray[i].opacity < 0) {
+//                             particleArray.splice(i, 1);
+//                         }
+//                     }
 
-                    this.opacity-= 0.01;
-                    this.x+= this.dx;
-                    this.y+= this.dy;
+//                     this.opacity-= 0.01;
+//                     this.x+= this.dx;
+//                     this.y+= this.dy;
 
-                    this.draw();
-                }
-            }
-        }
-    }
+//                     this.draw();
+//                 }
+//             }
+//         }
+//     }
 
 // ================================================================
 
@@ -523,60 +517,60 @@ function getCursorPosition(canvas, event) {
  * 
  ===================================================================*/
 
- class Walls extends Entity{
-  constructor(x, y){
-      super(x, y, tSize, tSize);
-      this.x = x;
-      this.y = y;
-      // this.collided = false;
-      this.width = tSize;
-      this.height = tSize;
-  }
+//  class Walls extends Entity{
+//   constructor(x, y){
+//       super(x, y, tSize, tSize);
+//       this.x = x;
+//       this.y = y;
+//       // this.collided = false;
+//       this.width = tSize;
+//       this.height = tSize;
+//   }
 
-  draw(ctx){
-      this.gravity();
-      ctx.fillStyle = "black";                    // **FILL** color inside the tiles
-      if(this.health === 1){
-          ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
-      }else if(this.health === 2){
-          ctx.strokeStyle = "#FCBB6D"             // burlywood (med) 
-      }else if(this.health === 3){
-          ctx.strokeStyle = "blanchedalmond"             // blanchedalmond (light)
-      }else{                         
-          ctx.strokeStyle = "#fff";               // normal color
-      }
-      ctx.shadowColor = "red";                // GLOW F1E6C1
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.lineJoin = "bevel";         // beveled edges
-      ctx.lineWidth = 4;              // how big the line width is
-      ctx.fillRect(this.x, this.y, this.width, this.height);
-      ctx.strokeRect(this.x, this.y, this.width, this.height);
+//   draw(ctx){
+//       this.gravity();
+//       ctx.fillStyle = "black";                    // **FILL** color inside the tiles
+//       if(this.health === 1){
+//           ctx.strokeStyle = "#D8737F"             // darkgoldenrod (dark) D8737F
+//       }else if(this.health === 2){
+//           ctx.strokeStyle = "#FCBB6D"             // burlywood (med) 
+//       }else if(this.health === 3){
+//           ctx.strokeStyle = "blanchedalmond"             // blanchedalmond (light)
+//       }else{                         
+//           ctx.strokeStyle = "#fff";               // normal color
+//       }
+//       ctx.shadowColor = "red";                // GLOW F1E6C1
+//       ctx.shadowBlur = 6;
+//       ctx.shadowOffsetX = 0;
+//       ctx.shadowOffsetY = 0;
+//       ctx.lineJoin = "bevel";         // beveled edges
+//       ctx.lineWidth = 4;              // how big the line width is
+//       ctx.fillRect(this.x, this.y, this.width, this.height);
+//       ctx.strokeRect(this.x, this.y, this.width, this.height);
 
-      // draw text
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 40px Arial"
-      ctx.textAlign="center"; 
-      ctx.textBaseline = "middle";
-      ctx.fillText(
-          this.health, 
-          this.x + this.width / 2, 
-          this.y + this.height / 1.95
-      )
+//       // draw text
+//       ctx.fillStyle = "#fff";
+//       ctx.font = "bold 40px Arial"
+//       ctx.textAlign="center"; 
+//       ctx.textBaseline = "middle";
+//       ctx.fillText(
+//           this.health, 
+//           this.x + this.width / 2, 
+//           this.y + this.height / 1.95
+//       )
 
-      enemyY = this.y;
-      enemyX = this.x;
-  }
+//       enemyY = this.y;
+//       enemyX = this.x;
+//   }
 
-  takeDamage(damage) {
-      this.health -= damage;
-  }
+//   takeDamage(damage) {
+//       this.health -= damage;
+//   }
 
-  isEnemyOffScreen(bullet) {
-      return bullet.y <= -bullet.height;
-  }
-}
+//   isEnemyOffScreen(bullet) {
+//       return bullet.y <= -bullet.height;
+//   }
+// }
 
 
 
@@ -594,10 +588,10 @@ function getCursorPosition(canvas, event) {
  function shuffle(array) {
 	var currentIndex = array.length, temporaryValue, randomIndex;
 	
-	// While there are elements to shuffle...
-	while (0 !== currentIndex) {
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
+	        
+	while (0 !== currentIndex) {                                  // While there are elements to shuffle...
+		
+		randomIndex = Math.floor(Math.random() * currentIndex);     // Pick a remaining element...
 		currentIndex -= 1;
 		
 		// And swap it with the current element.
@@ -715,11 +709,6 @@ var levelData = {
 
 
 
-
- 
-
-
-
  
 // math: xy * 113 = 5 blocks per row
                                                   // we want a 5 x 7 grid
@@ -732,41 +721,33 @@ let enemies = [];
 function createStage(){
   for(let i = 0; i < 1; i++){
     if (randomBoolean()){
-      enemies.push(new Enemy(2, i * tileWidth, randNum(1, 8)));      // line 1, 5 blocks per row
+      enemies.push(new Enemy(2, i * tileWidth, randNum(1, 5)));      // line 1, 5 blocks per row
       console.log(`createStage drew box 1`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((1 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
+      enemies.push(new Enemy((1 * tileWidth) + margin, i * tileWidth, randNum(1, 5)));
       console.log(`createStage drew box 2`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((2 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
+      enemies.push(new Enemy((2 * tileWidth) + margin, i * tileWidth, randNum(1, 5)));
       console.log(`createStage drew box 3`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((3 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
+      enemies.push(new Enemy((3 * tileWidth) + margin, i * tileWidth, randNum(1, 5)));
       console.log(`createStage drew box 4`);
     } 
     if (randomBoolean()){
-      enemies.push(new Enemy((4 * tileWidth) + margin, i * tileWidth, randNum(1, 8)));
+      enemies.push(new Enemy((4 * tileWidth) + margin, i * tileWidth, randNum(1, 5)));
       console.log(`createStage drew box 5`);
     }
   }
 }
 
 
-/** ----------------------------------------------------------------------------
- * Bug - 
- * 
- *          when asked to render tiles above canvas height, it only renders 2-5 every other row 
- *  ----------------------------------------------------------------------------- */
-
-
-
   function createNextStage(){
     for(let i = 0; i < 1; i++){
       if (randomBoolean()){
-        enemies.push(new Enemy(4, (i * tSize) - tSize, randNum(1, 8)));      // line 1, 5 blocks per row
+        enemies.push(new Enemy(4, (i * tSize) - tSize, randNum(1, 5)));      // line 1, 5 blocks per row
         console.log(`createNextStage2 drew box 1`);
       } else {
 
@@ -776,7 +757,7 @@ function createStage(){
         console.log(`createNextStage2 drew box 2`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((2 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
+        enemies.push(new Enemy((2 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 5)));
         console.log(`createNextStage2 drew box 3`);
       } 
       if (randomBoolean()){
@@ -784,7 +765,7 @@ function createStage(){
         console.log(`createNextStage2 drew box 4`);
       } 
       if (randomBoolean()){
-        enemies.push(new Enemy((4 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 8)));
+        enemies.push(new Enemy((4 * tileWidth) + margin, (i * tSize) - tSize, randNum(1, 5)));
         console.log(`createNextStage2 drew box 5`);
       }
     }
@@ -798,6 +779,23 @@ function createStage(){
  * 
  *                to pause the anxiety buildup
  ----------------------------------------------------------------------------- */
+
+ const closeIntro = document.getElementById('close-intro');
+ const introScreen = document.getElementById('intro-screen');
+
+ closeIntro.addEventListener(`click`, function () {
+
+  if (introScreen.style.display === `none`) {
+    introScreen.style.display = `block`;
+
+  } else {
+    introScreen.style.display = `none`;
+    main.style.display = `visible`;
+    menu.style.display = `block`;
+  }
+});
+
+
  const start = document.getElementById('start');
  start.addEventListener('click', function(e) {
   start.disabled = true;
@@ -816,27 +814,39 @@ function createStage(){
  var resetClicked = false;
 
  reset.addEventListener('click', function() {
-  // animationID = 0;
-  // animationID = cancelAnimationFrame(gameLoop);
+
   resetClicked = true;
-  // clearScreen();
  });
 
 
 //  const pause = document.getElementById('pause');
 //  pause.addEventListener('click', togglePause);
 
- const music = document.querySelector("music");
+ const music = document.getElementById('music');
+ const audio = document.querySelector("audio");
+
+ music.addEventListener('click', () => {
+  console.log(`music button clicked!`);
+  if (audio.paused) {
+    audio.volume = 0.2;
+    audio.play();
+    music.textContent = `Music OFF`;
+
+  } else {
+    audio.pause();
+    music.textContent = `Music ON`;
+  }
+  music.classList.add('fade');
+});
+
 
 
  function clearScreen() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
-  // ctx.fillRect(0, 0, canvas.width, canvas.height);
   
   start.disabled = false;
-
   lastLevelUpdate = 1;
   bulletController = new BulletController(canvas);
 
@@ -846,9 +856,6 @@ function createStage(){
     bulletController
   );
 
-
-  
-  // player.alive = true;
   enemies = [];
   score = 0;
 }
@@ -858,10 +865,14 @@ function createStage(){
      if (!paused)
      {
          paused = true;
+         audio.pause();
+         music.textContent = `Music ON`;
          cancelAnimationFrame(gameLoop);
      } else if (paused)
      {
         paused = false;
+        audio.play();
+        music.textContent = `Music OFF`;
         gameLoop();
      }
  
@@ -907,7 +918,6 @@ let lastLevelUpdate = 1;
 function gameLoop() {
 
         
-        // enemies = [];
         ctx.clearRect(0, 0, innerWidth, innerHeight);
         ctx.fillStyle = "black";
         // ctx.fillRect(0, 0, canvas.width, canvas.height);
