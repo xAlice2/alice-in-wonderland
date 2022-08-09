@@ -28,18 +28,22 @@ HTML, CSS & pure JavaScript
 
 
 ## Roadmap
-
-- [x] Refactor code to reroute gameloop to start button
-- [x] Refactor shoot to mouse click
-- [x] Attach pause function to space bar 
-- [x] Major Feature: Reset button that clears screen & start button that actually restarts the game from fresh
+- [ ] Major Features: 
+    - [x] Refactor code to reroute gameloop to start button
+    - [x] Refactor shoot to mouse click
+    - [x] Attach pause function to space bar 
+    - [x] Reset button that clears screen & start button that actually restarts the game from fresh
+    - [ ] Major feature: Lane Dividers (game mechanic)
+- [ ] Minor Features:
+    - [ ] Responsive design
+    - [ ] Score banner to display the score (the code is already there, just needs an UI to display it)
+    - [ ] Music Fade-in/out
+    - [ ] Non-obnoxious bullet sounds
+    - [ ] Pause image in middle of screen
+- [ ] Bugfixes:
+    - [ ] broken top wall
+    - [ ] OK button on splash screen is off-screen for those browsing in lower resolution
 - [x] ReadMe
-- [ ] Responsive design
-- [ ] Score banner to display the score (the code is already there, just needs an UI to display it)
-- [ ] Music Fade-in/out
-- [ ] Non-obnoxious bullet sounds
-- [ ] Pause image in middle of screen
-- [ ] Major feature: Lane Dividers (game mechanic)
 
 
 ## The Code
