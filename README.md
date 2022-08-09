@@ -21,7 +21,7 @@ The original concept of the game was a snake vs block shooter which had walls fo
 HTML, CSS & pure JavaScript
 
 <!-- ROADMAP -->
-## Roadmap
+## Roadmap 
 
 - [x] Add Changelog
 - [x] Add back to top links
