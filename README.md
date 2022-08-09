@@ -12,10 +12,10 @@ The objective is simple - all that you do is clear the blocks on the screen by s
  <!-- ABOUT THE GAME -->
 # About the project
 Alice in Wonderland is my first project deliverable for SEIRFX621. It is titled as such because as a first project, it was a lot of ideas, a lot of rabbitholes and a lot of failing successfully before I arrived to the current concept.
-
+<br />
 
 ## Brainstorming:
-Image to come. I err .. threw out some of the chicken scratch pieces of paper with old concepts. I only have what I've got on my ipad.
+![Screenshot](./screenshots/wireframe.png)
 
 
 
