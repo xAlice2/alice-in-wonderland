@@ -12,14 +12,12 @@ The objective is simple - all that you do is clear the blocks on the screen by s
  <!-- ABOUT THE GAME -->
 # About the project
 Alice in Wonderland is my first project deliverable for SEIRFX621. It is titled as such because as a first project, it was a lot of ideas, a lot of rabbitholes and a lot of failing successfully before I arrived to the current concept.
-<br />
-<br />
+
 
 ## Brainstorming:
 Image to come. I err .. threw out some of the chicken scratch pieces of paper with old concepts. I only have what I've got on my ipad.
 
 
-<br />
 
 ## Concept: 
 The original concept of the game was a snake vs block shooter which had walls forced you into various lanes as an added level of challenge. So when I say "failing successfully", I meant reworking each failure into a part of the game. I think this is relatable to everyone who are new to coding. Even the UI had many changes, what it was originally, only has elements of similarities to the current look. If I had more time, I would love to make it look a lot better.
